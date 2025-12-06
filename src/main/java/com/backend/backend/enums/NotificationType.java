@@ -1,0 +1,12 @@
+package com.backend.backend.enums;
+
+public enum NotificationType {
+    APPOINTMENT_REMINDER,
+    APPOINTMENT_CONFIRMATION,
+    APPOINTMENT_CANCELLATION,
+    PAYMENT_DUE,
+    PAYMENT_RECEIVED,
+    SYSTEM_ALERT,
+    DOCTOR_APPLICATION,
+    AFFECTATION_REQUEST
+}
