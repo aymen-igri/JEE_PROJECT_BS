@@ -5,6 +5,7 @@ import com.backend.backend.entity.Base.AuditableEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Entity
 @Table(name = "cabinets")
@@ -19,7 +20,7 @@ public class Cabinet extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "cabinet_id")
-    private Integer cabinetId;
+    private UUID cabinetId;
 
 
     @Column(name = "name", nullable = false, length = 100)

@@ -24,9 +24,6 @@ public class CabinetMember {
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private Staff user;
 
-    @Column(name = "cabinet_id", nullable = false)
-    private Integer cabinetId;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cabinet_id", insertable = false, updatable = false)
     private Cabinet cabinet;

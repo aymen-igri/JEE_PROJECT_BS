@@ -16,7 +16,7 @@ import java.util.List;
 
 public class Patient {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO )
     @Column(name = "patient_id")
     private Integer patientId;
 
