@@ -7,6 +7,7 @@ import com.backend.backend.entity.User.Staff;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.util.UUID;
 
 /**
  * From diagram: AffectationRequest
@@ -39,10 +40,7 @@ public class AffectationRequest extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "request_id")
-    private Integer requestId;
-
-    @Column(name = "cabinet_id", nullable = false)
-    private Integer cabinetId;
+    private UUID requestId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cabinet_id", insertable = false, updatable = false)
@@ -69,9 +67,6 @@ public class AffectationRequest extends AuditableEntity {
 
     @Column(name = "rejection_reason", columnDefinition = "TEXT")
     private String rejectionReason;
-
-    @Column(name = "processed_by")
-    private Integer processedBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "processed_by", insertable = false, updatable = false)

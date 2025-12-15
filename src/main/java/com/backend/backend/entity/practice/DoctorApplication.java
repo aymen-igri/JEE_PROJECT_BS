@@ -33,7 +33,8 @@ public class DoctorApplication extends AuditableEntity {
     @Column(name = "email", nullable = false, length = 100)
     private String email;
 
-
+    @Column(name = "cin", nullable = false, length = 20)
+    private String cin;
     @Column(name = "username", nullable = false, length = 50)
     private String username;
 

@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "doctors")
@@ -30,10 +31,12 @@ public class Doctor extends Staff {
 
     @Column(name = "license_document", length = 500)
     private String licenseDocument;
-
-
+    
     @Column(name = "cv_document", length = 500)
     private String cvDocument;
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Cabinet> consultations = new ArrayList<>();
+
+    // Renamed from 'consultations' to 'cabinets' for clarity
+    // LAZY loading prevents N+1 - use JOIN FETCH in repository when needed
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Cabinet> cabinets = new ArrayList<>();
 }
