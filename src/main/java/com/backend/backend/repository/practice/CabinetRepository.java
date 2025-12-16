@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface CabinetRepository extends JpaRepository<Cabinet, Integer> {
+public interface CabinetRepository extends JpaRepository<Cabinet, UUID> {
 
     boolean existsByDoctorUserIdAndStatus(UUID doctorId, String status);
 
@@ -20,20 +20,20 @@ public interface CabinetRepository extends JpaRepository<Cabinet, Integer> {
             "FROM Cabinet c WHERE c.doctor.userId = :doctorId")
     List<CabinetSummaryProjection> findCabinetsByDoctorId(@Param("doctorId") UUID doctorId);
 
-    Optional<Cabinet> findByCabinetId(Integer cabinetId);
+    Optional<Cabinet> findByCabinetId(UUID cabinetId);
 
     @Modifying
     @Query("UPDATE Cabinet c SET c.status = :status WHERE c.cabinetId = :cabinetId")
-    int updateStatus(@Param("cabinetId") Integer cabinetId, @Param("status") String status);
+    int updateStatus(@Param("cabinetId") UUID cabinetId, @Param("status") String status);
 
-    Optional<Cabinet> findByCabinetIdAndStatus(Integer cabinetId, String status);
+    Optional<Cabinet> findByCabinetIdAndStatus(UUID cabinetId, String status);
 
     @Query("SELECT c FROM Cabinet c JOIN FETCH c.doctor WHERE c.cabinetId = :cabinetId")
-    Optional<Cabinet> findByIdWithOwner(@Param("cabinetId") Integer cabinetId);
+    Optional<Cabinet> findByIdWithOwner(@Param("cabinetId") UUID cabinetId);
 }
 
 interface CabinetSummaryProjection {
-    Integer getCabinetId();
+    UUID getCabinetId();
     String getName();
     String getStatus();
 }

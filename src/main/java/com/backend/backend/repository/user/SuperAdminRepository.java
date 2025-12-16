@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface SuperAdminRepository extends JpaRepository<SuperAdmin, Integer> {
+public interface SuperAdminRepository extends JpaRepository<SuperAdmin, UUID> {
 
 
     List<SuperAdmin> findByLevel(Integer level);
@@ -23,7 +23,5 @@ public interface SuperAdminRepository extends JpaRepository<SuperAdmin, Integer>
 
     @Query("SELECT sa.level, COUNT(sa) FROM SuperAdmin sa GROUP BY sa.level")
     List<Object[]> countByLevel();
-
-    boolean existsById(UUID userId);
 }
 
