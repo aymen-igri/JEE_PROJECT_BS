@@ -3,8 +3,11 @@ package com.backend.backend.entity.practice;
 
 import com.backend.backend.entity.Base.AuditableEntity;
 import com.backend.backend.entity.User.Admin;
+import com.backend.backend.enums.ApplicationStatus;
+import com.backend.backend.repository.practice.DoctorApplicationRepository;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 
 import java.time.LocalDate;
@@ -18,7 +21,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DoctorApplication extends AuditableEntity {
+public class DoctorApplication  {
 
 
     @Id
@@ -60,8 +63,9 @@ public class DoctorApplication extends AuditableEntity {
     private String cvDocument;
 
     @Column(name = "status", nullable = false, length = 20)
-    private String status = "PENDING";
+    private ApplicationStatus status = ApplicationStatus.PENDING;
 
+    @CreatedDate
     @Column(name = "application_date", nullable = false)
     private LocalDate applicationDate;
 

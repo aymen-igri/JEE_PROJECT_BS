@@ -14,7 +14,6 @@ import java.util.UUID;
 @Repository
 public interface SuperAdminRepository extends JpaRepository<SuperAdmin, UUID> {
 
-
     List<SuperAdmin> findByLevel(Integer level);
 
     List<SuperAdmin> findByLevelGreaterThanEqual(Integer level);
@@ -23,5 +22,7 @@ public interface SuperAdminRepository extends JpaRepository<SuperAdmin, UUID> {
 
     @Query("SELECT sa.level, COUNT(sa) FROM SuperAdmin sa GROUP BY sa.level")
     List<Object[]> countByLevel();
+
+    SuperAdmin findByUsername(String username);
 }
 
