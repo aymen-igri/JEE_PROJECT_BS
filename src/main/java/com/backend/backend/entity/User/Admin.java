@@ -21,5 +21,5 @@ public class Admin extends User {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "registered_by", insertable = false, updatable = false)
-    private SuperAdmin registeredByAdmin;
+    private SuperAdmin registeredBySuperAdmin;
 }

@@ -1,6 +1,8 @@
 package com.backend.backend.repository.practice;
 
+import com.backend.backend.config.ApplicationConfig;
 import com.backend.backend.entity.practice.DoctorApplication;
+import com.backend.backend.enums.ApplicationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -24,18 +26,18 @@ public interface DoctorApplicationRepository extends JpaRepository<DoctorApplica
 
     @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END " +
            "FROM DoctorApplication a " +
-           "WHERE a.email = :email AND a.status = 'PENDING' " +
+           "WHERE a.email = :email AND a.status = com.backend.backend.enums.ApplicationStatus.PENDING " +
            "OR EXISTS (SELECT 1 FROM User u WHERE u.email = :email)")
     boolean isEmailTaken(@Param("email") String email);
 
     @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END " +
            "FROM DoctorApplication a " +
-           "WHERE a.username = :username AND a.status = 'PENDING' " +
+           "WHERE a.username = :username AND a.status = com.backend.backend.enums.ApplicationStatus.PENDING " +
            "OR EXISTS (SELECT 1 FROM User u WHERE u.username = :username)")
     boolean isUsernameTaken(@Param("username") String username);
     @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END " +
            "FROM DoctorApplication a " +
-           "WHERE a.licenseNumber = :licenseNumber AND a.status = 'PENDING' " +
+           "WHERE a.licenseNumber = :licenseNumber AND a.status = com.backend.backend.enums.ApplicationStatus.PENDING " +
            "OR EXISTS (SELECT 1 FROM Doctor d WHERE d.licenseNumber = :licenseNumber)")
     boolean isLicenseNumberTaken(@Param("licenseNumber") String licenseNumber);
     
@@ -43,10 +45,10 @@ public interface DoctorApplicationRepository extends JpaRepository<DoctorApplica
 
     Optional<DoctorApplication> findByEmailAndStatus(String email, String status);
 
-    @Query("SELECT a FROM DoctorApplication a WHERE a.status = 'PENDING' " +
+    @Query("SELECT a FROM DoctorApplication a WHERE a.status = com.backend.backend.enums.ApplicationStatus.PENDING " +
             "ORDER BY a.applicationDate ASC")
     List<DoctorApplication> findPendingApplications();
-    List<DoctorApplication> findByStatusOrderByApplicationDateDesc(String status);
+    List<DoctorApplication> findByStatusOrderByApplicationDateDesc(ApplicationStatus status);
     @Transactional
     @Modifying
     @Query("UPDATE DoctorApplication a " +
@@ -54,13 +56,13 @@ public interface DoctorApplicationRepository extends JpaRepository<DoctorApplica
             "    a.processedDate = :processedDate, " +
             "    a.processedByAdmin.userId = :adminId, " +
             "    a.rejectionReason = :rejectionReason " +
-            "WHERE a.applicationId = :applicationId AND a.status = 'PENDING'")
+            "WHERE a.applicationId = :applicationId AND a.status = com.backend.backend.enums.ApplicationStatus.PENDING")
     int processApplication(
             @Param("applicationId") UUID applicationId,
-            @Param("status") String status,
+            @Param("status") ApplicationStatus status,
             @Param("processedDate") LocalDate processedDate,
             @Param("adminId") UUID adminId,
             @Param("rejectionReason") String rejectionReason
     );
-    Optional<DoctorApplication> findByApplicationIdAndStatus(UUID applicationId, String status);
+    Optional<DoctorApplication> findByApplicationIdAndStatus(UUID applicationId, ApplicationStatus status);
 }
