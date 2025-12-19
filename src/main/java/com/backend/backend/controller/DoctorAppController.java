@@ -2,24 +2,20 @@ package com.backend.backend.controller;
 
 import com.backend.backend.dto.request.Auth.AuthRequest;
 import com.backend.backend.dto.request.Doctor.DoctorAppDataRequest;
-import com.backend.backend.dto.request.Doctor.DoctorAppRequest;
 import com.backend.backend.dto.response.Doctor.DoctorAppResponce;
 import com.backend.backend.service.Doctor.DoctorAppService;
-import com.backend.backend.service.Doctor.DoctorService;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import tools.jackson.databind.ObjectMapper;
 
-import javax.print.attribute.standard.Media;
 import java.awt.*;
+import java.util.Map;
 
 @RestController
+@RequestMapping("/api/doctor")
 public class DoctorAppController {
 
     private final DoctorAppService doctorAppService;
@@ -30,14 +26,14 @@ public class DoctorAppController {
         this.objectMapper = new ObjectMapper();
     }
 
-    @PostMapping(value = "/api/doctor/apply", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<DoctorAppResponce> apply(
+    @PostMapping(value = "/apply", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> apply(
             @RequestParam("application") String application,
             @RequestParam("auth") String authRequest,
             @RequestParam("diploma") MultipartFile diploma,
             @RequestParam("license") MultipartFile license,
             @RequestParam("cv") MultipartFile cv
-    )throws JsonProcessingException {
+    )throws Exception {
 
         DoctorAppDataRequest doctorAppRequest = objectMapper.readValue(application, DoctorAppDataRequest.class);
         AuthRequest authRequestObj = objectMapper.readValue(authRequest, AuthRequest.class);
@@ -48,7 +44,8 @@ public class DoctorAppController {
                 license,
                 cv
         );
-        return  ResponseEntity.ok(responce);
+
+        return  ResponseEntity.status(HttpStatus.CREATED).body(responce);
     }
 
 }

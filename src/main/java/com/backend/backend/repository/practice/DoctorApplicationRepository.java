@@ -1,6 +1,7 @@
 package com.backend.backend.repository.practice;
 
 import com.backend.backend.config.ApplicationConfig;
+import com.backend.backend.entity.User.Doctor;
 import com.backend.backend.entity.practice.DoctorApplication;
 import com.backend.backend.enums.ApplicationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,6 +17,9 @@ import java.util.UUID;
 
 public interface DoctorApplicationRepository extends JpaRepository<DoctorApplication, UUID> {
 
+    DoctorApplication findDoctorApplicationByEmail(String email);
+    DoctorApplication findDoctorApplicationByCin(String CIN);
+    DoctorApplication findDoctorApplicationByUsername(String username);
 
     boolean existsByCinAndStatus(String cin, String status);
     boolean existsByEmailAndStatus(String email, String status);
