@@ -1,6 +1,7 @@
 package com.backend.backend.dto.request.Doctor;
 
 import com.backend.backend.enums.ApplicationStatus;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -13,6 +14,7 @@ public record DoctorAppDataRequest(
 
         @NotBlank(message = "email name is required")
         @Size(min = 10, max = 50)
+        @Email(message = "Invalid email format")
         String email,
 
         @NotBlank(message = "CIN name is required")
@@ -31,16 +33,12 @@ public record DoctorAppDataRequest(
         @Size(min = 10, max = 30)
         String licenseNumber,
 
-        @NotBlank(message = "Diplomat Document is required")
         String diplomaDocument,
 
-        @NotBlank(message = "license Document is required")
         String licenseDocument,
 
-        @NotBlank(message = "CV Document is required")
         String cvDocument,
 
-        @NotNull(message = "license Number name is required")
         ApplicationStatus status
 
 ){}
