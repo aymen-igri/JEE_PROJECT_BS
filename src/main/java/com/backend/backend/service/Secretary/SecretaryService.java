@@ -1,20 +1,16 @@
 package com.backend.backend.service.Secretary;
 
 import com.backend.backend.dto.request.Auth.AuthRequest;
-import com.backend.backend.dto.request.Doctor.DoctorAppDataRequest;
 import com.backend.backend.dto.request.Secretary.SecretaryRequest;
 import com.backend.backend.dto.response.Secretary.SecretaryResponse;
 import com.backend.backend.entity.User.Secretary;
 import com.backend.backend.mapper.Secretary.SecretaryMapper;
 import com.backend.backend.repository.user.SecretaryRepository;
 import com.backend.backend.repository.user.UserRepository;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Set;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SecretaryService {
@@ -23,16 +19,15 @@ public class SecretaryService {
     private final SecretaryMapper secretaryMapper;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final Validator validator;
 
-    public SecretaryService(SecretaryRepository secretaryRepository, SecretaryMapper secretaryMapper, PasswordEncoder passwordEncoder, UserRepository userRepository, Validator validator) {
+    public SecretaryService(SecretaryRepository secretaryRepository, SecretaryMapper secretaryMapper, PasswordEncoder passwordEncoder, UserRepository userRepository) {
         this.secretaryRepository = secretaryRepository;
         this.secretaryMapper = secretaryMapper;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
-        this.validator = validator;
     }
 
+    @Transactional
     public SecretaryResponse signUp(
             SecretaryRequest secretaryRequest,
             AuthRequest authRequest

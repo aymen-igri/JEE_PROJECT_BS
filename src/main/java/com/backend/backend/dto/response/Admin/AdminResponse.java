@@ -1,11 +1,11 @@
-package com.backend.backend.dto.response.Secretary;
+package com.backend.backend.dto.response.Admin;
 
 import com.backend.backend.enums.EGender;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
-public record SecretaryResponse (
+public record AdminResponse(
         UUID id,
         String fullName,
         String CIN,
@@ -15,4 +15,5 @@ public record SecretaryResponse (
         String email,
         String phone,
         String profilePhoto
-) {}
+) {
+}
