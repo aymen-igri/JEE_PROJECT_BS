@@ -14,6 +14,7 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -37,6 +38,7 @@ public class DoctorAppService {
         this.validator = validator;
     }
 
+    @Transactional
     public DoctorAppResponce apply(
             DoctorAppDataRequest doctorAppRequest,
             AuthRequest authRequest,
