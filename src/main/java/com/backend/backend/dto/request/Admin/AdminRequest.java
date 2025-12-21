@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public record AdminRequest(
         @NotBlank(message = "Full name is required")
@@ -33,7 +34,10 @@ public record AdminRequest(
 
         @NotBlank(message = "Phone number is required")
         @Size(min = 9, max = 9)
-        String phone
+        String phone,
+
+        @NotNull(message = "Super Admin Id is required")
+        UUID registeredBy
 ) {
 }
 
