@@ -62,6 +62,7 @@ public class DoctorApplication  {
     @Column(name = "cv_document", length = 500)
     private String cvDocument;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private ApplicationStatus status = ApplicationStatus.PENDING;
 

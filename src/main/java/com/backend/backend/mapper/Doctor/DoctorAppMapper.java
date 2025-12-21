@@ -1,18 +1,24 @@
 package com.backend.backend.mapper.Doctor;
 
+import com.backend.backend.dto.request.Admin.AdminAccResp;
 import com.backend.backend.dto.request.Doctor.DoctorAppDataRequest;
 import com.backend.backend.dto.response.Doctor.DoctorAppResponce;
 import com.backend.backend.entity.practice.DoctorApplication;
 import com.backend.backend.repository.practice.DoctorApplicationRepository;
+import com.backend.backend.repository.user.AdminRepository;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
 
 @Component
 public class DoctorAppMapper {
 
     public final DoctorApplicationRepository doctorApplicationRepository;
+    public final AdminRepository adminRepository;
 
-    public DoctorAppMapper(DoctorApplicationRepository doctorApplicationRepository) {
+    public DoctorAppMapper(DoctorApplicationRepository doctorApplicationRepository, AdminRepository adminRepository) {
         this.doctorApplicationRepository = doctorApplicationRepository;
+        this.adminRepository = adminRepository;
     }
 
     public DoctorApplication toApplication(DoctorAppDataRequest request) {
@@ -32,6 +38,24 @@ public class DoctorAppMapper {
 
         return application;
 
+    }
+
+    public DoctorApplication toUpdatedApplication(DoctorApplication application, AdminAccResp response){
+
+        application.setStatus(response.status());
+        application.setProcessedByAdmin(adminRepository.findAdminByUserId(response.processedBy()));
+        if (response.rejectionReason() != null) {
+            application.setRejectionReason(response.rejectionReason());
+        } else {
+            application.setRejectionReason("");
+        }
+        if (response.note() != null) {
+            application.setNotes(response.note());
+        } else {
+            application.setNotes("");
+        }
+        application.setProcessedDate(LocalDate.now());
+        return application;
     }
 
     public DoctorAppResponce toAppDTO(DoctorApplication application) {

@@ -20,6 +20,6 @@ public class Admin extends User {
     private List<String> permissions;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "registered_by", insertable = false, updatable = false)
+    @JoinColumn(name = "registered_by", insertable = true, updatable = false) // aymen is here, i changed insertible argument value from false to true so i can insert the value of the super admin UUID
     private SuperAdmin registeredBySuperAdmin;
 }

@@ -17,6 +17,7 @@ import java.util.UUID;
 
 public interface DoctorApplicationRepository extends JpaRepository<DoctorApplication, UUID> {
 
+    DoctorApplication findDoctorApplicationByApplicationId(UUID applicationId);
     DoctorApplication findDoctorApplicationByEmail(String email);
     DoctorApplication findDoctorApplicationByCin(String CIN);
     DoctorApplication findDoctorApplicationByUsername(String username);

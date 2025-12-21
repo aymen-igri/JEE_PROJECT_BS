@@ -7,7 +7,6 @@ import com.backend.backend.entity.User.Secretary;
 import com.backend.backend.mapper.Secretary.SecretaryMapper;
 import com.backend.backend.repository.user.SecretaryRepository;
 import com.backend.backend.repository.user.UserRepository;
-import jakarta.validation.Validator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -23,6 +23,7 @@ public interface SuperAdminRepository extends JpaRepository<SuperAdmin, UUID> {
     @Query("SELECT sa.level, COUNT(sa) FROM SuperAdmin sa GROUP BY sa.level")
     List<Object[]> countByLevel();
 
+    SuperAdmin findByUserId(UUID userId);
     SuperAdmin findByUsername(String username);
 }
 
