@@ -72,6 +72,11 @@ public class DoctorAppService {
         ){
             throw new IllegalArgumentException("Username already taken");
         }
+        if (doctorAppRepository.findDoctorApplicationByLicenseNumber(doctorAppRequest.licenseNumber()) != null
+                && doctorAppRepository.findDoctorApplicationByLicenseNumber(doctorAppRequest.licenseNumber()).getStatus() != ApplicationStatus.REJECTED
+        ){
+            throw new IllegalArgumentException("License number already taken");
+        }
 
         long maxFileSize = 10 * 1024 * 1024;
         if (diploma.getSize() > maxFileSize){

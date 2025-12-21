@@ -74,7 +74,7 @@ public class DoctorApplication  {
     private LocalDate processedDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "processed_by", insertable = false, updatable = false)
+    @JoinColumn(name = "processed_by", insertable = true, updatable = false) //aymen is here, changed the insertable from false to true so i can insert the UUID of the admin
     private Admin processedByAdmin;
 
     @Column(name = "rejection_reason", columnDefinition = "TEXT")

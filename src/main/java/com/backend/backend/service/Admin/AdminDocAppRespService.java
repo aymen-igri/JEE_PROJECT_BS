@@ -2,10 +2,13 @@ package com.backend.backend.service.Admin;
 
 import com.backend.backend.dto.request.Admin.AdminAccResp;
 import com.backend.backend.dto.response.Doctor.DoctorAppResponce;
+import com.backend.backend.entity.User.Doctor;
 import com.backend.backend.entity.practice.DoctorApplication;
 import com.backend.backend.enums.ApplicationStatus;
 import com.backend.backend.mapper.Doctor.DoctorAppMapper;
 import com.backend.backend.repository.practice.DoctorApplicationRepository;
+import com.backend.backend.repository.user.AdminRepository;
+import com.backend.backend.repository.user.DoctorRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -13,10 +16,14 @@ import java.util.UUID;
 @Service
 public class AdminDocAppRespService {
 
+    private final DoctorRepository doctorRepository;
+    private final AdminRepository adminRepository;
     private final DoctorApplicationRepository doctorAppRepository;
     private final DoctorAppMapper doctorAppMapper;
 
-    public AdminDocAppRespService(DoctorApplicationRepository doctorAppRepository, DoctorAppMapper doctorAppMapper) {
+    public AdminDocAppRespService(DoctorRepository doctorRepository, DoctorApplicationRepository doctorAppRepository, DoctorAppMapper doctorAppMapper, AdminRepository adminRepository) {
+        this.adminRepository = adminRepository;
+        this.doctorRepository = doctorRepository;
         this.doctorAppRepository = doctorAppRepository;
         this.doctorAppMapper = doctorAppMapper;
     }
@@ -32,7 +39,10 @@ public class AdminDocAppRespService {
         }
 
         DoctorApplication updatedApp = doctorAppMapper.toUpdatedApplication(application,adminResponse);
-        doctorAppRepository.save(application);
+        doctorAppRepository.save(updatedApp);
+
+        Doctor doctorAcc = doctorAppMapper.toDoctor(updatedApp, adminRepository.findAdminByUserId(adminResponse.processedBy()));
+        doctorRepository.save(doctorAcc);
 
         return new DoctorAppResponce(
                 application.getApplicationId(),

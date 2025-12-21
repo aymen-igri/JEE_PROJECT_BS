@@ -21,8 +21,9 @@ public class Doctor extends Staff {
 
     @Column(name = "license_number", unique = true, nullable = false, length = 50)
     private String licenseNumber;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "registered_by", insertable = false, updatable = false)
+    @JoinColumn(name = "registered_by", insertable = true, updatable = false) // aymen is here, changed the insertable from false to true so i can insert the UUID of the admin
     private Admin registeredByAdmin;
 
     @Column(name = "diploma_document", length = 500)
