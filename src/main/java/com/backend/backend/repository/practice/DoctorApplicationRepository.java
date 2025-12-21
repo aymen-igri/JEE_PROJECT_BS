@@ -21,6 +21,7 @@ public interface DoctorApplicationRepository extends JpaRepository<DoctorApplica
     DoctorApplication findDoctorApplicationByEmail(String email);
     DoctorApplication findDoctorApplicationByCin(String CIN);
     DoctorApplication findDoctorApplicationByUsername(String username);
+    DoctorApplication findDoctorApplicationByLicenseNumber(String licenseNumber);
 
     boolean existsByCinAndStatus(String cin, String status);
     boolean existsByEmailAndStatus(String email, String status);
