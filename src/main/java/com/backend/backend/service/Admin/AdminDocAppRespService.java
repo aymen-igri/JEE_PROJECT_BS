@@ -10,6 +10,7 @@ import com.backend.backend.repository.practice.DoctorApplicationRepository;
 import com.backend.backend.repository.user.AdminRepository;
 import com.backend.backend.repository.user.DoctorRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -28,6 +29,7 @@ public class AdminDocAppRespService {
         this.doctorAppMapper = doctorAppMapper;
     }
 
+    @Transactional
     public DoctorAppResponce changeStatus(UUID applicationId, AdminAccResp adminResponse){
 
         DoctorApplication application = doctorAppRepository.findDoctorApplicationByApplicationId(applicationId);

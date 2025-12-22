@@ -2,6 +2,7 @@ package com.backend.backend.service.FileStorageService;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ public class FileStorageService {
         }
     }
 
+    @Transactional
     public String storeFile(MultipartFile file, UUID applicationId, String fileType) {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("File is empty");
