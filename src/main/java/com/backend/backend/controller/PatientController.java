@@ -2,6 +2,7 @@ package com.backend.backend.controller;
 
 import com.backend.backend.dto.request.Patient.CreatePatientRequest;
 import com.backend.backend.dto.response.Patient.CreatePatientResponse;
+import com.backend.backend.dto.response.Patient.PatientResponse;
 import com.backend.backend.service.Patient.PatientService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,7 @@ public class PatientController {
     public ResponseEntity<?> createPatinet(
             @Valid @RequestBody CreatePatientRequest request
     ) throws Exception{
-        CreatePatientResponse response = patientService.createPatient(request);
+        PatientResponse response = patientService.createPatient(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

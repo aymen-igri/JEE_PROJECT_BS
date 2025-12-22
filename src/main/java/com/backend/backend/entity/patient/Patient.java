@@ -44,12 +44,9 @@ public class Patient {
     @Column(name = "address", length = 255)
     private String address;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "registered_by", insertable = true, updatable = false) //aymen is here, bruh
     private Secretary registeredBySecretary;
-
-
 
     @Column(name = "registration_date", nullable = false)
     private LocalDate registrationDate;
