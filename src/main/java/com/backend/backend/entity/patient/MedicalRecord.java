@@ -23,7 +23,7 @@ public class MedicalRecord extends AuditableEntity {
     private UUID recordId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "patient_id", insertable = false, updatable = false)
+    @JoinColumn(name = "patient_id", insertable = true, updatable = false) //aymen is here, fahd, lah yrham lwalidin la 3ti lga3 insertable value true, rah t9hart, wach ghanb9a kol mra tcreee db mn jdid :(
     private Patient patient;
 
     @Column(name = "allergies", columnDefinition = "jsonb")

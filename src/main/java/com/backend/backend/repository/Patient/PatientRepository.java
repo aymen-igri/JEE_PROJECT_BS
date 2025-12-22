@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public interface PatientRepository extends JpaRepository<Patient, UUID>, JpaSpecificationExecutor<Patient> {
 
+    Patient findPatientByPatientId(UUID patientId);
     boolean existsByCin(String cin);
 
 }
