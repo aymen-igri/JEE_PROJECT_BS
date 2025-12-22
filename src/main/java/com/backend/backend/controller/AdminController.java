@@ -10,6 +10,7 @@ import com.backend.backend.service.Admin.AdminDocAppRespService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -26,7 +27,7 @@ public class AdminController {
         this.appReponseService = appReponseService;
     }
 
-    //@PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @PostMapping("/createAccount")
     public ResponseEntity<?> createAccount(
             @Valid @RequestBody AdminSignupRequest request
@@ -35,6 +36,7 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/changeStatus")
     public ResponseEntity<?> changeStatus(
             @Valid @RequestParam UUID applicationId,

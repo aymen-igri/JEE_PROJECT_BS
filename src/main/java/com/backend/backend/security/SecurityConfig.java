@@ -17,8 +17,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())  // Disable CSRF for REST API
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/secretary/signup", "/api/doctor/apply","/api/admin/changeStatus").permitAll()  // Public endpoints
-                        .requestMatchers("/api/admin/createAccount").hasRole("SUPER_ADMIN")  // Allow Admin account creation only for SUPER_ADMIN
+                        .requestMatchers("/api/secretary/signup", "/api/doctor/apply").permitAll()  // Public endpoints
+                        .requestMatchers("/api/admin/createAccount").hasRole("SUPER_ADMIN") //Allow Admin account creation only for SUPER_ADMIN
+                        .requestMatchers("/api/admin/changeStatus").hasRole("ADMIN")
+                        .requestMatchers("/api/patient/create").hasRole("SECRETARY")
                         .anyRequest().authenticated()  // All other endpoints require authentication
                 )
                 .sessionManagement(session -> session

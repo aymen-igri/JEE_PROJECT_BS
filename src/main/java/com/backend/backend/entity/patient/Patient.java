@@ -1,11 +1,13 @@
 package com.backend.backend.entity.patient;
 
 import com.backend.backend.entity.User.Secretary;
+import com.backend.backend.enums.EGender;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "patients")
@@ -18,7 +20,8 @@ public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO )
     @Column(name = "patient_id")
-    private Integer patientId;
+    //private Integer patientId; aymen is here, really fahd?
+    private UUID patientId;
 
     @Column(name = "cin", unique = true, length = 20)
     private String cin;
@@ -33,7 +36,7 @@ public class Patient {
     private LocalDate dateOfBirth;
 
     @Column(name = "gender", length = 1)
-    private String gender;
+    private EGender gender; //aymen is here, just changed the type from string to an EGender enum
 
     @Column(name = "phone", length = 20)
     private String phone;
@@ -43,7 +46,7 @@ public class Patient {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "registered_by", insertable = false, updatable = false)
+    @JoinColumn(name = "registered_by", insertable = true, updatable = false) //aymen is here, bruh
     private Secretary registeredBySecretary;
 
 
