@@ -23,16 +23,15 @@ public class DoctorPatientLink {
     private UUID linkId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "doctor_id", insertable = false, updatable = false)
+    @JoinColumn(name = "doctor_id", insertable = true, updatable = false)
     private Doctor doctor;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "patient_id", insertable = false, updatable = false)
+    @JoinColumn(name = "patient_id", insertable = true, updatable = false)
     private Patient patient;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "linked_by", insertable = false, updatable = false)
+    @JoinColumn(name = "linked_by", insertable = true, updatable = false)
     private Secretary linkedBySecretary;
 
     @Column(name = "linked_date", nullable = false)
