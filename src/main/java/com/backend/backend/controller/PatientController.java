@@ -1,7 +1,8 @@
 package com.backend.backend.controller;
 
 import com.backend.backend.dto.request.Patient.CreatePatientRequest;
-import com.backend.backend.dto.response.Patient.CreatePatientResponse;
+import com.backend.backend.dto.request.Patient.DoctorPatientLinkRequest;
+import com.backend.backend.dto.response.Patient.DoctorPatientLinkResponse;
 import com.backend.backend.dto.response.Patient.PatientResponse;
 import com.backend.backend.service.Patient.PatientService;
 import jakarta.validation.Valid;
@@ -30,5 +31,14 @@ public class PatientController {
     ) throws Exception{
         PatientResponse response = patientService.createPatient(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/link")
+    public ResponseEntity<?> LinkPatient(
+            @Valid @RequestBody DoctorPatientLinkRequest request
+    ) throws Exception{
+        DoctorPatientLinkResponse response = patientService.linkPatient(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
     }
 }

@@ -25,6 +25,8 @@ import java.util.UUID;
 public interface DoctorRepository extends JpaRepository<Doctor, UUID>,
         JpaSpecificationExecutor<Doctor> {
 
+    Doctor findDoctorByUserId(UUID userId);
+    
     boolean existsByEmail(String email);
     boolean existsByCIN(String cin);
     boolean existsByUsername(String username);

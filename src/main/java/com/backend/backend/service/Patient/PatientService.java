@@ -1,11 +1,15 @@
 package com.backend.backend.service.Patient;
 
 import com.backend.backend.dto.request.Patient.CreatePatientRequest;
+import com.backend.backend.dto.request.Patient.DoctorPatientLinkRequest;
 import com.backend.backend.dto.response.Patient.CreatePatientResponse;
+import com.backend.backend.dto.response.Patient.DoctorPatientLinkResponse;
 import com.backend.backend.dto.response.Patient.PatientResponse;
+import com.backend.backend.entity.patient.DoctorPatientLink;
 import com.backend.backend.entity.patient.MedicalRecord;
 import com.backend.backend.entity.patient.Patient;
 import com.backend.backend.mapper.Patient.PatientsMapper;
+import com.backend.backend.repository.Patient.DoctorPatientLinkRepository;
 import com.backend.backend.repository.Patient.MedicalRecordRepository;
 import com.backend.backend.repository.Patient.PatientRepository;
 import com.backend.backend.repository.user.SecretaryRepository;
@@ -23,17 +27,20 @@ public class PatientService {
     public final PatientRepository patientRepository;
     public final MedicalRecordRepository medicalRecordRepository;
     public final SecretaryRepository secretaryRepository;
+    public final DoctorPatientLinkRepository doctorPatientLinkRepository;
 
     public PatientService(
             PatientsMapper patientMapper,
             PatientRepository patientRepository,
             MedicalRecordRepository medicalRecordRepository,
-            SecretaryRepository secretaryRepository
+            SecretaryRepository secretaryRepository,
+            DoctorPatientLinkRepository doctorPatientLinkRepository
     ) {
         this.patientMapper = patientMapper;
         this.patientRepository = patientRepository;
         this.medicalRecordRepository = medicalRecordRepository;
         this.secretaryRepository = secretaryRepository;
+        this.doctorPatientLinkRepository = doctorPatientLinkRepository;
     }
 
     @Transactional
@@ -57,6 +64,16 @@ public class PatientService {
         return patientMapper.toPatientDTO(
                 patientRepository.save(patient),
                 medicalRecordRepository.save(medicalRecord)
+        );
+    }
+
+    @Transactional
+    public DoctorPatientLinkResponse linkPatient(DoctorPatientLinkRequest request){
+
+        DoctorPatientLink savedLink = patientMapper.toDoctorPatientLink(request);
+        savedLink.setLinkedDate(LocalDate.now());
+        return patientMapper.toDPLinkDTO(
+                doctorPatientLinkRepository.save(savedLink)
         );
     }
 }

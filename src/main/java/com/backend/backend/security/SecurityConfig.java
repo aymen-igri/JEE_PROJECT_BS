@@ -20,7 +20,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/secretary/signup", "/api/doctor/apply").permitAll()  // Public endpoints
                         .requestMatchers("/api/admin/createAccount").hasRole("SUPER_ADMIN") //Allow Admin account creation only for SUPER_ADMIN
                         .requestMatchers("/api/admin/changeStatus").hasRole("ADMIN")
-                        .requestMatchers("/api/patient/create").hasRole("SECRETARY")
+                        .requestMatchers("/api/patient/create", "/api/patient/link").hasRole("SECRETARY")
                         .anyRequest().authenticated()  // All other endpoints require authentication
                 )
                 .sessionManagement(session -> session
