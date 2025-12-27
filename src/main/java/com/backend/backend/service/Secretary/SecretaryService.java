@@ -4,12 +4,16 @@ import com.backend.backend.dto.request.Auth.AuthRequest;
 import com.backend.backend.dto.request.Secretary.SecretaryRequest;
 import com.backend.backend.dto.response.Secretary.SecretaryResponse;
 import com.backend.backend.entity.User.Secretary;
+import com.backend.backend.entity.activity.ActivityLog;
 import com.backend.backend.mapper.Secretary.SecretaryMapper;
+import com.backend.backend.repository.activity.ActivityLogRepository;
 import com.backend.backend.repository.user.SecretaryRepository;
 import com.backend.backend.repository.user.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 public class SecretaryService {
@@ -18,12 +22,20 @@ public class SecretaryService {
     private final SecretaryMapper secretaryMapper;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final ActivityLogRepository activityLogRepository;
 
-    public SecretaryService(SecretaryRepository secretaryRepository, SecretaryMapper secretaryMapper, PasswordEncoder passwordEncoder, UserRepository userRepository) {
+    public SecretaryService(
+            SecretaryRepository secretaryRepository,
+            SecretaryMapper secretaryMapper,
+            PasswordEncoder passwordEncoder,
+            UserRepository userRepository,
+            ActivityLogRepository activityLogRepository
+    ) {
         this.secretaryRepository = secretaryRepository;
         this.secretaryMapper = secretaryMapper;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
+        this.activityLogRepository = activityLogRepository;
     }
 
     @Transactional
@@ -47,6 +59,12 @@ public class SecretaryService {
         secretary.setPassword(passwordEncoder.encode(authRequest.password()));
 
         Secretary savedSecretary = secretaryRepository.save(secretary);
+
+        ActivityLog secretaryLog = new ActivityLog();
+        secretaryLog.setAction("Secretary account with ID: " + savedSecretary.getUserId() + "created." ) ;
+        secretaryLog.setEntityType("Secretary");
+        secretaryLog.setTimestamp(LocalDateTime.now());
+        activityLogRepository.save(secretaryLog);
 
         return secretaryMapper.toSecretaryDTO(savedSecretary);
     }
