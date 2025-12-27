@@ -27,9 +27,9 @@ public class DataInitializer implements CommandLineRunner {
             superAdmin.setDateOfBirth(LocalDate.of(1980,1,2));
             superAdmin.setGender(EGender.HOMME);
             superAdmin.setAddress("123 Main St, City, Country");
-            superAdmin.setEmail("superAdmin654@gmail.com@");
+            superAdmin.setEmail("superAdmin654@gmail.com");
             superAdmin.setUsername("superadmin");
-            superAdmin.setPassword(passwordEncoder.encode("superadminpassword123"));
+            superAdmin.setPassword("{bcrypt}" + passwordEncoder.encode("superadminpassword123"));
             superAdmin.setPhone("600000000");
             superAdmin.setLevel(1);
 
