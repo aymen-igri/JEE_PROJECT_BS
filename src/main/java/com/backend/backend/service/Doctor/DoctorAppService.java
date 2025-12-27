@@ -3,9 +3,11 @@ package com.backend.backend.service.Doctor;
 import com.backend.backend.dto.request.Auth.AuthRequest;
 import com.backend.backend.dto.request.Doctor.DoctorAppDataRequest;
 import com.backend.backend.dto.response.Doctor.DoctorAppResponce;
+import com.backend.backend.entity.activity.ActivityLog;
 import com.backend.backend.entity.practice.DoctorApplication;
 import com.backend.backend.enums.ApplicationStatus;
 import com.backend.backend.mapper.Doctor.DoctorAppMapper;
+import com.backend.backend.repository.activity.ActivityLogRepository;
 import com.backend.backend.repository.practice.DoctorApplicationRepository;
 import com.backend.backend.repository.user.DoctorRepository;
 import com.backend.backend.service.FileStorageService.FileStorageService;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -29,13 +32,23 @@ public class DoctorAppService {
     private final PasswordEncoder passwordEncoder;
     private final FileStorageService fileStorageService;
     private final Validator validator;
+    private final ActivityLogRepository activityLogRepository;
 
-    public DoctorAppService(DoctorApplicationRepository doctorAppRepository, DoctorRepository doctorRepository,DoctorAppMapper doctorAppMapper, PasswordEncoder passwordEncoder, FileStorageService fileStorageService, Validator validator) {
+    public DoctorAppService(
+            DoctorApplicationRepository doctorAppRepository,
+            DoctorRepository doctorRepository,
+            DoctorAppMapper doctorAppMapper,
+            PasswordEncoder passwordEncoder,
+            FileStorageService fileStorageService,
+            Validator validator,
+            ActivityLogRepository activityLogRepository
+    ) {
         this.doctorAppRepository = doctorAppRepository;
         this.doctorAppMapper = doctorAppMapper;
         this.passwordEncoder = passwordEncoder;
         this.fileStorageService = new FileStorageService();
         this.validator = validator;
+        this.activityLogRepository = activityLogRepository;
     }
 
     @Transactional
@@ -106,6 +119,12 @@ public class DoctorAppService {
         application.setStatus(ApplicationStatus.PENDING);
 
         DoctorApplication savedApp = doctorAppRepository.save(application);
+
+        ActivityLog doctorLog = new ActivityLog();
+        doctorLog.setAction("Application with ID: " + savedApp.getApplicationId() + " submitted.");
+        doctorLog.setEntityType("DoctorApplication");
+        doctorLog.setTimestamp(LocalDateTime.now());
+        activityLogRepository.save(doctorLog);
 
         return doctorAppMapper.toAppDTO(savedApp);
     }
