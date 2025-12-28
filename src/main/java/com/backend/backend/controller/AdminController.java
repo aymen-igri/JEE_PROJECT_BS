@@ -36,7 +36,7 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/changeStatus")
     public ResponseEntity<?> changeStatus(
             @Valid @RequestParam UUID applicationId,
