@@ -9,6 +9,7 @@ import com.backend.backend.mapper.Secretary.SecretaryMapper;
 import com.backend.backend.repository.activity.ActivityLogRepository;
 import com.backend.backend.repository.user.SecretaryRepository;
 import com.backend.backend.repository.user.UserRepository;
+import com.backend.backend.service.Email.EmailService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,19 +24,22 @@ public class SecretaryService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final ActivityLogRepository activityLogRepository;
+    private final EmailService emailService;
 
     public SecretaryService(
             SecretaryRepository secretaryRepository,
             SecretaryMapper secretaryMapper,
             PasswordEncoder passwordEncoder,
             UserRepository userRepository,
-            ActivityLogRepository activityLogRepository
+            ActivityLogRepository activityLogRepository,
+            EmailService emailService
     ) {
         this.secretaryRepository = secretaryRepository;
         this.secretaryMapper = secretaryMapper;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.activityLogRepository = activityLogRepository;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -58,13 +62,24 @@ public class SecretaryService {
         secretary.setUsername(authRequest.username());
         secretary.setPassword(passwordEncoder.encode(authRequest.password()));
 
+        // Save the secretary entity
         Secretary savedSecretary = secretaryRepository.save(secretary);
 
+        // Log the creation activity
         ActivityLog secretaryLog = new ActivityLog();
         secretaryLog.setAction("Secretary account with ID: " + savedSecretary.getUserId() + "created." ) ;
         secretaryLog.setEntityType("Secretary");
         secretaryLog.setTimestamp(LocalDateTime.now());
         activityLogRepository.save(secretaryLog);
+
+        // Send welcome email
+        emailService.setEmail(
+                secretaryRequest.email(),
+                "Welcome to Our Healthcare System",
+                "Dear " + secretaryRequest.fullName() + ",\n\n" +
+                        "Your secretary account has been successfully created.\n\n" +
+                        "Best regards,\nIntegrity Healthcare Team"
+        );
 
         return secretaryMapper.toSecretaryDTO(savedSecretary);
     }
