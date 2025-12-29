@@ -3,8 +3,11 @@ package com.backend.backend.entity.practice;
 
 import com.backend.backend.entity.Base.AuditableEntity;
 import com.backend.backend.entity.User.Admin;
+import com.backend.backend.enums.ApplicationStatus;
+import com.backend.backend.repository.practice.DoctorApplicationRepository;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 
 import java.time.LocalDate;
@@ -18,7 +21,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DoctorApplication extends AuditableEntity {
+public class DoctorApplication  {
 
 
     @Id
@@ -33,7 +36,8 @@ public class DoctorApplication extends AuditableEntity {
     @Column(name = "email", nullable = false, length = 100)
     private String email;
 
-
+    @Column(name = "cin", nullable = false, length = 20)
+    private String cin;
     @Column(name = "username", nullable = false, length = 50)
     private String username;
 
@@ -58,9 +62,11 @@ public class DoctorApplication extends AuditableEntity {
     @Column(name = "cv_document", length = 500)
     private String cvDocument;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
-    private String status = "PENDING";
+    private ApplicationStatus status = ApplicationStatus.PENDING;
 
+    @CreatedDate
     @Column(name = "application_date", nullable = false)
     private LocalDate applicationDate;
 
@@ -68,7 +74,7 @@ public class DoctorApplication extends AuditableEntity {
     private LocalDate processedDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "processed_by", insertable = false, updatable = false)
+    @JoinColumn(name = "processed_by", insertable = true, updatable = false) //aymen is here, changed the insertable from false to true so i can insert the UUID of the admin
     private Admin processedByAdmin;
 
     @Column(name = "rejection_reason", columnDefinition = "TEXT")

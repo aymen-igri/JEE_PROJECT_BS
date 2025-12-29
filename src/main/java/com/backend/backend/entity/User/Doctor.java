@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "doctors")
@@ -20,8 +21,9 @@ public class Doctor extends Staff {
 
     @Column(name = "license_number", unique = true, nullable = false, length = 50)
     private String licenseNumber;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "registered_by", insertable = false, updatable = false)
+    @JoinColumn(name = "registered_by", insertable = true, updatable = false) // aymen is here, changed the insertable from false to true so i can insert the UUID of the admin
     private Admin registeredByAdmin;
 
     @Column(name = "diploma_document", length = 500)
@@ -30,10 +32,12 @@ public class Doctor extends Staff {
 
     @Column(name = "license_document", length = 500)
     private String licenseDocument;
-
-
+    
     @Column(name = "cv_document", length = 500)
     private String cvDocument;
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Cabinet> consultations = new ArrayList<>();
+
+    // Renamed from 'consultations' to 'cabinets' for clarity
+    // LAZY loading prevents N+1 - use JOIN FETCH in repository when needed
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Cabinet> cabinets = new ArrayList<>();
 }
