@@ -14,6 +14,7 @@ import com.backend.backend.repository.user.DoctorRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Console;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -52,7 +53,8 @@ public class AdminDocAppRespService {
         }
 
         DoctorApplication updatedApp = doctorAppMapper.toUpdatedApplication(application,adminResponse);
-        doctorAppRepository.save(updatedApp);
+        DoctorApplication savedApp = doctorAppRepository.save(updatedApp);
+        System.out.println("application status changed to " + savedApp.getStatus());
 
         ActivityLog appLog = new ActivityLog();
         appLog.setUser(adminRepository.findAdminByUserId(adminResponse.processedBy()));
@@ -62,7 +64,7 @@ public class AdminDocAppRespService {
         activityLogRepository.save(appLog);
 
         // create doctor account if application is approved
-        if (updatedApp.getStatus() == ApplicationStatus.APPROVED){
+        if (savedApp.getStatus() == ApplicationStatus.APPROVED){
             Doctor doctorAcc = doctorAppMapper.toDoctor(updatedApp, adminRepository.findAdminByUserId(adminResponse.processedBy()));
             doctorRepository.save(doctorAcc);
             ActivityLog doctorLog = new ActivityLog();
