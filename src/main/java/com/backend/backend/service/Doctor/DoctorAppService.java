@@ -10,6 +10,8 @@ import com.backend.backend.mapper.Doctor.DoctorAppMapper;
 import com.backend.backend.repository.activity.ActivityLogRepository;
 import com.backend.backend.repository.practice.DoctorApplicationRepository;
 import com.backend.backend.repository.user.DoctorRepository;
+import com.backend.backend.repository.user.UserRepository;
+import com.backend.backend.service.Email.EmailService;
 import com.backend.backend.service.FileStorageService.FileStorageService;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -28,27 +30,33 @@ import java.util.UUID;
 public class DoctorAppService {
 
     private final DoctorApplicationRepository doctorAppRepository;
+    private final UserRepository userRepository;
     private final DoctorAppMapper doctorAppMapper;
     private final PasswordEncoder passwordEncoder;
     private final FileStorageService fileStorageService;
     private final Validator validator;
     private final ActivityLogRepository activityLogRepository;
+    private final EmailService emailService;
 
     public DoctorAppService(
             DoctorApplicationRepository doctorAppRepository,
+            UserRepository userRepository,
             DoctorRepository doctorRepository,
             DoctorAppMapper doctorAppMapper,
             PasswordEncoder passwordEncoder,
             FileStorageService fileStorageService,
             Validator validator,
-            ActivityLogRepository activityLogRepository
+            ActivityLogRepository activityLogRepository,
+            EmailService emailService
     ) {
         this.doctorAppRepository = doctorAppRepository;
+        this.userRepository = userRepository;
         this.doctorAppMapper = doctorAppMapper;
         this.passwordEncoder = passwordEncoder;
         this.fileStorageService = new FileStorageService();
         this.validator = validator;
         this.activityLogRepository = activityLogRepository;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -70,17 +78,20 @@ public class DoctorAppService {
             throw new ConstraintViolationException(authViolations);
         }
 
-        if (doctorAppRepository.findDoctorApplicationByEmail(doctorAppRequest.email()) != null
+        if (userRepository.existsByEmail(doctorAppRequest.email())
+                && doctorAppRepository.findDoctorApplicationByEmail(doctorAppRequest.email()) != null
                 && doctorAppRepository.findDoctorApplicationByEmail(doctorAppRequest.email()).getStatus() != ApplicationStatus.REJECTED
         ){
             throw new IllegalArgumentException("Email already taken");
         }
-        if (doctorAppRepository.findDoctorApplicationByCin(doctorAppRequest.CIN()) != null
+        if (userRepository.existsByCIN(doctorAppRequest.CIN())
+                && doctorAppRepository.findDoctorApplicationByCin(doctorAppRequest.CIN()) != null
                 && doctorAppRepository.findDoctorApplicationByCin(doctorAppRequest.CIN()).getStatus() != ApplicationStatus.REJECTED)
         {
             throw new IllegalArgumentException("CIN already taken");
         }
-        if (doctorAppRepository.findDoctorApplicationByUsername(authRequest.username()) != null
+        if (userRepository.existsByUsername(authRequest.username())
+                && doctorAppRepository.findDoctorApplicationByUsername(authRequest.username()) != null
                 && doctorAppRepository.findDoctorApplicationByUsername(authRequest.username()).getStatus() != ApplicationStatus.REJECTED
         ){
             throw new IllegalArgumentException("Username already taken");
@@ -118,13 +129,25 @@ public class DoctorAppService {
         application.setApplicationDate(LocalDate.now());
         application.setStatus(ApplicationStatus.PENDING);
 
+        // Save the application entity
         DoctorApplication savedApp = doctorAppRepository.save(application);
 
+        // Log the application submission activity
         ActivityLog doctorLog = new ActivityLog();
         doctorLog.setAction("Application with ID: " + savedApp.getApplicationId() + " submitted.");
         doctorLog.setEntityType("DoctorApplication");
         doctorLog.setTimestamp(LocalDateTime.now());
         activityLogRepository.save(doctorLog);
+
+        // send a confirmation email
+        emailService.setEmail(
+                savedApp.getEmail(),
+                "Welcome to Our Healthcare System",
+                "Dear " + savedApp.getFullName() + ",\n\n" +
+                        "Your Application has been successfully created.\n\n" +
+                        "We will review your application and get back to you shortly.\n\n" +
+                        "Best regards,\nIntegrity Healthcare Team"
+        );
 
         return doctorAppMapper.toAppDTO(savedApp);
     }
