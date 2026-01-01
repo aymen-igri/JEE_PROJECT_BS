@@ -5,6 +5,8 @@ import com.backend.backend.entity.Base.AuditableEntity;
 import com.backend.backend.entity.User.Doctor;
 import com.backend.backend.entity.User.Secretary;
 import com.backend.backend.entity.practice.Cabinet;
+import  com.backend.backend.enums.AppointmentType;
+import com.backend.backend.enums.AppointmentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -27,19 +29,19 @@ public class Appointment extends AuditableEntity {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "patient_id", insertable = false, updatable = false)
+    @JoinColumn(name = "patient_id", insertable = true, updatable = true)
     private Patient patient;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "doctor_id", insertable = false, updatable = false)
+    @JoinColumn(name = "doctor_id", insertable = true, updatable = true)
     private Doctor doctor;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cabinet_id", insertable = false, updatable = false)
+    @JoinColumn(name = "cabinet_id", insertable = true, updatable = true)
     private Cabinet cabinet;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "scheduled_by", insertable = false, updatable = false)
+    @JoinColumn(name = "scheduled_by", insertable = true, updatable = true)
     private Secretary scheduledBySecretary;
 
     @Column(name = "appointment_date_time", nullable = false)
@@ -47,12 +49,12 @@ public class Appointment extends AuditableEntity {
 
     @Column(name = "duration")
     private Integer duration;
-
+    @Enumerated(EnumType.STRING)
     @Column(name = "appointment_type", length = 30)
-    private String appointmentType;
-
+    private AppointmentType appointmentType;
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
-    private String status = "SCHEDULED";
+    private AppointmentStatus status;
 
     @Column(name = "reason", columnDefinition = "TEXT")
     private String reason;
