@@ -3,16 +3,21 @@ package com.backend.backend.service.Doctor;
 import com.backend.backend.dto.request.Doctor.DoctorAppDataRequest;
 import com.backend.backend.dto.request.Doctor.DoctorInfoResponse;
 import com.backend.backend.entity.User.Doctor;
+import com.backend.backend.repository.practice.CabinetRepository;
 import com.backend.backend.repository.user.DoctorRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class DoctorService {
 
     private final DoctorRepository doctorRepository;
+    private final CabinetRepository cabinetRepository;
 
-    public DoctorService(DoctorRepository doctorRepository) {
+    public DoctorService(DoctorRepository doctorRepository, CabinetRepository cabinetRepository) {
         this.doctorRepository = doctorRepository;
+        this.cabinetRepository = cabinetRepository;
     }
 
     public DoctorInfoResponse getDoctorByUsername(String email) {
@@ -63,5 +68,10 @@ public class DoctorService {
                 doctor.getProfilePhoto(),
                 doctor.getCreatedAt()
         );
+    }
+
+    public boolean hasCabinet(UUID doctorId) {
+        return cabinetRepository.existsByDoctorUserId(doctorId);
+
     }
 }

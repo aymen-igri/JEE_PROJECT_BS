@@ -1,6 +1,7 @@
 package com.backend.backend.security;
 
 import com.backend.backend.repository.user.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -43,6 +44,14 @@ public class SecurityConfig {
                         .requestMatchers("/api/patient/create", "/api/patient/link").hasRole("SECRETARY")
                         .requestMatchers("/api/doctor/me").hasRole("DOCTOR")
                         .anyRequest().authenticated()
+                ).exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write(
+                                    "{\"error\": \"Unauthorized\", \"message\": \"Authentication required\"}"
+                            );
+                        })
                 )
                 .formLogin(form -> form.disable())
                 .logout(logout -> logout
@@ -53,6 +62,10 @@ public class SecurityConfig {
                             response.getWriter().write("{\"message\":\"Logout successful\"}");
                         })
                         .permitAll()
+                )            .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                        .maximumSessions(1)
+                        .maxSessionsPreventsLogin(false)
                 )
                 .httpBasic(basic -> {});
 
