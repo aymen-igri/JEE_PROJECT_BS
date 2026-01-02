@@ -6,10 +6,7 @@ import com.backend.backend.service.Secretary.SecretaryService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/secretary")
@@ -19,6 +16,11 @@ public class SecretaryController {
 
     public SecretaryController(SecretaryService secretaryService) {
         this.secretaryService = secretaryService;
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllSecretaries() {
+        return ResponseEntity.status(HttpStatus.OK).body(secretaryService.getAllSecretaries());
     }
 
     @PostMapping("/signup")
