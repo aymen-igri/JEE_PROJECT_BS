@@ -2,11 +2,14 @@ package com.backend.backend.service.Doctor;
 
 import com.backend.backend.dto.request.Doctor.DoctorAppDataRequest;
 import com.backend.backend.dto.request.Doctor.DoctorInfoResponse;
+import com.backend.backend.dto.response.Doctor.DoctorResponce;
 import com.backend.backend.entity.User.Doctor;
+import com.backend.backend.mapper.Doctor.DoctorMapper;
 import com.backend.backend.repository.practice.CabinetRepository;
 import com.backend.backend.repository.user.DoctorRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -14,10 +17,21 @@ public class DoctorService {
 
     private final DoctorRepository doctorRepository;
     private final CabinetRepository cabinetRepository;
+    private final DoctorMapper doctorMapper;
 
-    public DoctorService(DoctorRepository doctorRepository, CabinetRepository cabinetRepository) {
+    public DoctorService(
+            DoctorRepository doctorRepository,
+            CabinetRepository cabinetRepository,
+            DoctorMapper doctorMapper
+    ){
         this.doctorRepository = doctorRepository;
         this.cabinetRepository = cabinetRepository;
+        this.doctorMapper = doctorMapper;
+    }
+
+    public List<DoctorResponce> getAllDoctors() {
+        List<Doctor> doctors = doctorRepository.findAll();
+        return doctors.stream().map(doctorMapper::toDoctorDTO).toList();
     }
 
     public DoctorInfoResponse getDoctorByUsername(String email) {
