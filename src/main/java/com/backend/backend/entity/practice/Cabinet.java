@@ -56,7 +56,7 @@ public class Cabinet extends AuditableEntity {
 
 
     @Column(name = "created_by")
-    private Integer createdBy;
+    private UUID createdBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", nullable = false)

@@ -4,9 +4,10 @@ import com.backend.backend.dto.request.User.VerifDuplRequest;
 import com.backend.backend.service.User.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/user")
@@ -29,5 +30,13 @@ public class UserController {
     ) throws Exception {
         userService.userExists(request);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/suspend")
+    public ResponseEntity<?> suspendUser(
+            @RequestParam UUID id
+    ) throws Exception {
+        var response = userService.suspendUser(id);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

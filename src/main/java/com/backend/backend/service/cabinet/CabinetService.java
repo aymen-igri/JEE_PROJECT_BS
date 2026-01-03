@@ -1,22 +1,31 @@
 package com.backend.backend.service.cabinet;
 
+import com.backend.backend.dto.response.Cabinet.CabinetResponse;
 import com.backend.backend.entity.User.Doctor;
 import com.backend.backend.entity.practice.Cabinet;
+import com.backend.backend.mapper.Cabinet.CabinetMapper;
 import com.backend.backend.repository.practice.CabinetRepository;
 import com.backend.backend.repository.user.DoctorRepository;
 import com.backend.backend.repository.user.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
 public class CabinetService {
     private final CabinetRepository cabinetRepository;
     private final DoctorRepository doctorRepository;
+    private final CabinetMapper cabinetMapper;
 
-    public CabinetService(CabinetRepository cabinetRepository, DoctorRepository doctorRepository) {
+    public CabinetService(
+            CabinetRepository cabinetRepository,
+            DoctorRepository doctorRepository,
+            CabinetMapper cabinetMapper
+    ){
         this.cabinetRepository = cabinetRepository;
         this.doctorRepository = doctorRepository;
+        this.cabinetMapper = cabinetMapper;
     }
 
     public Cabinet createCabinet(Cabinet cabinet, UUID doctorId) {
@@ -28,5 +37,10 @@ public class CabinetService {
         cabinet.setStatus("Active");
 
         return cabinetRepository.save(cabinet);
+    }
+
+    public List<CabinetResponse> getAllCabinets() {
+        List<Cabinet> cabinets = cabinetRepository.findAll();
+        return cabinets.stream().map(cabinetMapper::toCabinetResponse).toList();
     }
 }

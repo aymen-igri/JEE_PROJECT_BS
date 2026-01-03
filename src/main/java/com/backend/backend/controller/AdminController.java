@@ -31,7 +31,7 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.getAllAdmins());
     }
 
-    //@PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @PostMapping("/createAccount")
     public ResponseEntity<?> createAccount(
             @Valid @RequestBody AdminSignupRequest request

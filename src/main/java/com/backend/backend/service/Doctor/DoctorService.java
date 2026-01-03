@@ -86,6 +86,5 @@ public class DoctorService {
 
     public boolean hasCabinet(UUID doctorId) {
         return cabinetRepository.existsByDoctorUserId(doctorId);
-
     }
 }
