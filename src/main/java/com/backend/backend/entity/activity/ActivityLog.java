@@ -26,7 +26,7 @@ public class ActivityLog {
     private UUID logId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", insertable = true, updatable = false)
     private User user;
 
     @Column(name = "action", nullable = false, length = 200)
@@ -35,8 +35,8 @@ public class ActivityLog {
     @Column(name = "entity_type", length = 50)
     private String entityType;
 
-    @Column(name = "entity_id")
-    private Integer entityId;
+    @Column(name = "entity_id", length = 50)
+    private String entityId;
 
     @Column(name = "details", columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)

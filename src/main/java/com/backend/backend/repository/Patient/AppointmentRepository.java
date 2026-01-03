@@ -1,4 +1,4 @@
-package com.backend.backend.repository.patient;
+package com.backend.backend.repository.Patient;
 
 import com.backend.backend.entity.patient.Appointment;
 import com.backend.backend.enums.AppointmentStatus;
@@ -88,28 +88,38 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
 
     // ==================== CONFLICT DETECTION ====================
 
-    @Query("SELECT a FROM Appointment a " +
-           "WHERE a.doctor.userId = :doctorId " +
-           "AND a.appointmentDateTime >= :rangeStart " +
-           "AND a.appointmentDateTime < :rangeEnd " +
-           "AND a.status NOT IN :excludedStatuses")
+    /**
+     * Find appointments that overlap with the given time range for a specific doctor.
+     * An overlap occurs when: existing_start < new_end AND existing_end > new_start
+     */
+    @Query(value = "SELECT a.* FROM appointments a " +
+           "WHERE a.doctor_id = :doctorId " +
+           "AND a.status NOT IN (:excludedStatuses) " +
+           "AND a.appointment_date_time < :rangeEnd " +
+           "AND (a.appointment_date_time + (COALESCE(a.duration, 30) * INTERVAL '1 minute')) > :rangeStart",
+           nativeQuery = true)
     List<Appointment> findPotentialConflicts(
             @Param("doctorId") UUID doctorId,
             @Param("rangeStart") LocalDateTime rangeStart,
             @Param("rangeEnd") LocalDateTime rangeEnd,
-            @Param("excludedStatuses") Collection<AppointmentStatus> excludedStatuses
+            @Param("excludedStatuses") List<String> excludedStatuses
     );
 
-    @Query("SELECT a FROM Appointment a " +
-           "WHERE a.cabinet.cabinetId = :cabinetId " +
-           "AND a.appointmentDateTime >= :rangeStart " +
-           "AND a.appointmentDateTime < :rangeEnd " +
-           "AND a.status NOT IN :excludedStatuses")
+    /**
+     * Find appointments that overlap with the given time range for a specific cabinet.
+     * An overlap occurs when: existing_start < new_end AND existing_end > new_start
+     */
+    @Query(value = "SELECT a.* FROM appointments a " +
+           "WHERE a.cabinet_id = :cabinetId " +
+           "AND a.status NOT IN (:excludedStatuses) " +
+           "AND a.appointment_date_time < :rangeEnd " +
+           "AND (a.appointment_date_time + (COALESCE(a.duration, 30) * INTERVAL '1 minute')) > :rangeStart",
+           nativeQuery = true)
     List<Appointment> findCabinetConflicts(
             @Param("cabinetId") UUID cabinetId,
             @Param("rangeStart") LocalDateTime rangeStart,
             @Param("rangeEnd") LocalDateTime rangeEnd,
-            @Param("excludedStatuses") Collection<AppointmentStatus> excludedStatuses
+            @Param("excludedStatuses") List<String> excludedStatuses
     );
 
     // ==================== UTILITY METHODS ====================
