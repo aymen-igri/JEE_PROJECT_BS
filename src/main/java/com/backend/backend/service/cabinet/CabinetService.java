@@ -20,12 +20,7 @@ public class CabinetService {
     private final SubscriptionRepository subscriptionRepository;
     private final CabinetMapper cabinetMapper;
 
-
-    public CabinetService(
-            CabinetRepository cabinetRepository,
-            DoctorRepository doctorRepository,
-            CabinetMapper cabinetMapper
-    ){
+    public CabinetService(CabinetRepository cabinetRepository, DoctorRepository doctorRepository, SubscriptionRepository subscriptionRepository, CabinetMapper cabinetMapper) {
         this.cabinetRepository = cabinetRepository;
         this.doctorRepository = doctorRepository;
         this.subscriptionRepository = subscriptionRepository;
