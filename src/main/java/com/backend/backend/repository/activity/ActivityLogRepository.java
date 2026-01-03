@@ -26,7 +26,7 @@ public interface ActivityLogRepository extends JpaRepository<ActivityLog, UUID> 
             "ORDER BY al.timestamp DESC")
     List<ActivityLog> findLogsByEntityTypeAndId(
             @Param("entityType") String entityType,
-            @Param("entityId") Integer entityId
+            @Param("entityId") String entityId
     );
 
     @Query("SELECT al FROM ActivityLog al " +

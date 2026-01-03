@@ -13,7 +13,7 @@ import com.backend.backend.entity.practice.Cabinet;
 import com.backend.backend.enums.AppointmentStatus;
 import com.backend.backend.mapper.Appointment.AppointmentMapper;
 import com.backend.backend.repository.activity.ActivityLogRepository;
-import com.backend.backend.repository.patient.AppointmentRepository;
+import com.backend.backend.repository.Patient.AppointmentRepository;
 import com.backend.backend.repository.Patient.PatientRepository;
 import com.backend.backend.repository.practice.CabinetRepository;
 import com.backend.backend.repository.user.DoctorRepository;
@@ -38,17 +38,21 @@ public class AppointmentService {
             AppointmentStatus.NO_SHOW
     );
 
+    // String version for native queries
+    private static final List<String> EXCLUDED_FOR_CONFLICTS_STRINGS = List.of(
+            AppointmentStatus.CANCELLED.name(),
+            AppointmentStatus.NO_SHOW.name()
+    );
+
     private static final Set<AppointmentStatus> ACTIVE_STATUSES = EnumSet.of(
             AppointmentStatus.SCHEDULED,
-            AppointmentStatus.CONFIRMED
+            AppointmentStatus.IN_PROGRESS
     );
     private static final Set<AppointmentStatus> RESCHEDULABLE_STATUSES = EnumSet.of(
-            AppointmentStatus.SCHEDULED,
-            AppointmentStatus.CONFIRMED
+            AppointmentStatus.SCHEDULED
     );
     private static final Set<AppointmentStatus> CANCELLABLE_STATUSES = EnumSet.of(
             AppointmentStatus.SCHEDULED,
-            AppointmentStatus.CONFIRMED,
             AppointmentStatus.IN_PROGRESS
     );
     private static final int DEFAULT_DURATION_MINUTES = 30;
@@ -110,7 +114,7 @@ public class AppointmentService {
 
         // Check for doctor conflicts
         List<Appointment> doctorConflicts = appointmentRepository.findPotentialConflicts(
-                request.doctorId(), rangeStart, rangeEnd, EXCLUDED_FOR_CONFLICTS
+                request.doctorId(), rangeStart, rangeEnd, EXCLUDED_FOR_CONFLICTS_STRINGS
         );
         if (!doctorConflicts.isEmpty()) {
             throw new IllegalArgumentException("Doctor has a conflicting appointment at this time");
@@ -118,7 +122,7 @@ public class AppointmentService {
 
         // Check for cabinet conflicts
         List<Appointment> cabinetConflicts = appointmentRepository.findCabinetConflicts(
-                request.cabinetId(), rangeStart, rangeEnd, EXCLUDED_FOR_CONFLICTS
+                request.cabinetId(), rangeStart, rangeEnd, EXCLUDED_FOR_CONFLICTS_STRINGS
         );
         if (!cabinetConflicts.isEmpty()) {
             throw new IllegalArgumentException("Cabinet is occupied at this time");
@@ -173,7 +177,7 @@ public class AppointmentService {
 
         // Check for doctor conflicts (excluding current appointment)
         List<Appointment> doctorConflicts = appointmentRepository.findPotentialConflicts(
-                appointment.getDoctor().getUserId(), rangeStart, rangeEnd, EXCLUDED_FOR_CONFLICTS
+                appointment.getDoctor().getUserId(), rangeStart, rangeEnd, EXCLUDED_FOR_CONFLICTS_STRINGS
         ).stream()
                 .filter(a -> !a.getAppointmentId().equals(appointment.getAppointmentId()))
                 .collect(Collectors.toList());
@@ -184,7 +188,7 @@ public class AppointmentService {
 
         // Check for cabinet conflicts (excluding current appointment)
         List<Appointment> cabinetConflicts = appointmentRepository.findCabinetConflicts(
-                appointment.getCabinet().getCabinetId(), rangeStart, rangeEnd, EXCLUDED_FOR_CONFLICTS
+                appointment.getCabinet().getCabinetId(), rangeStart, rangeEnd, EXCLUDED_FOR_CONFLICTS_STRINGS
         ).stream()
                 .filter(a -> !a.getAppointmentId().equals(appointment.getAppointmentId()))
                 .collect(Collectors.toList());
@@ -355,7 +359,7 @@ public class AppointmentService {
         }
 
         // Validate status
-        if (appointment.getStatus() != AppointmentStatus.CONFIRMED &&
+        if (appointment.getStatus() != AppointmentStatus.SCHEDULED &&
             appointment.getStatus() != AppointmentStatus.IN_PROGRESS) {
             throw new IllegalArgumentException("Cannot complete appointment with status: " + appointment.getStatus());
         }
@@ -372,6 +376,53 @@ public class AppointmentService {
         // Log activity
         logActivity("Appointment completed", "Appointment", savedAppointment.getAppointmentId(),
                 "Appointment marked as completed by Dr. " + doctor.getFullName());
+
+        return appointmentMapper.toAppointmentResponse(savedAppointment);
+    }
+
+    /**
+     * Allows a doctor to cancel their own appointment.
+     * Doctors can only cancel appointments assigned to them that are in SCHEDULED or IN_PROGRESS status.
+     *
+     * @param doctorId The ID of the doctor requesting cancellation
+     * @param appointmentId The ID of the appointment to cancel
+     * @param cancellationReason The reason for cancellation
+     * @return The updated appointment response
+     */
+    @Transactional
+    public AppointmentResponse cancelAppointmentByDoctor(UUID doctorId, UUID appointmentId, String cancellationReason) {
+        // Validate doctor exists
+        Doctor doctor = doctorRepository.findDoctorByUserId(doctorId);
+        if (doctor == null) {
+            throw new IllegalArgumentException("Doctor not found with ID: " + doctorId);
+        }
+
+        // Fetch appointment with details
+        Appointment appointment = appointmentRepository.findByAppointmentIdWithDetails(appointmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found with ID: " + appointmentId));
+
+        // Validate doctor ownership - only the assigned doctor can cancel
+        if (!appointment.getDoctor().getUserId().equals(doctorId)) {
+            throw new SecurityException("Unauthorized: This appointment is not assigned to you");
+        }
+
+        // Validate status allows cancellation
+        if (!CANCELLABLE_STATUSES.contains(appointment.getStatus())) {
+            throw new IllegalArgumentException("Cannot cancel appointment with status: " + appointment.getStatus());
+        }
+
+        // Update status and notes atomically
+        String cancellationNote = "[Cancelled by Doctor] " + (cancellationReason != null ? cancellationReason : "No reason provided");
+        String existingNotes = appointment.getNotes() != null ? appointment.getNotes() + "\n" : "";
+
+        appointment.setStatus(AppointmentStatus.CANCELLED);
+        appointment.setNotes(existingNotes + cancellationNote);
+
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+
+        // Log activity
+        logActivity("Appointment cancelled by doctor", "Appointment", savedAppointment.getAppointmentId(),
+                "Appointment cancelled by Dr. " + doctor.getFullName() + ". Reason: " + cancellationReason);
 
         return appointmentMapper.toAppointmentResponse(savedAppointment);
     }
