@@ -49,7 +49,8 @@ public class AdminMapper {
                 admin.getEmail(),
                 admin.getPhone(),
                 admin.getCreatedAt(),
-                admin.getProfilePhoto()
+                admin.getProfilePhoto(),
+                admin.getStatus()
         );
     }
 }

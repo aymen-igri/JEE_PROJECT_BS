@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.ListResourceBundle;
 
 @Service
 public class AdminService {
@@ -35,6 +37,14 @@ public class AdminService {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.activityLogRepository = activityLogRepository;
+    }
+
+    @Transactional
+    public List<AdminResponse> getAllAdmins() {
+        List<Admin> admins = adminRepository.findAll();
+        return admins.stream()
+                .map(adminMapper::toAdminDTO)
+                .toList();
     }
 
     @Transactional

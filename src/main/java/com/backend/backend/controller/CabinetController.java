@@ -39,6 +39,12 @@ public class CabinetController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllCabinets() {
+        return ResponseEntity.status(HttpStatus.OK).body(cabinetService.getAllCabinets());
+    }
+
     @PostMapping("/upload-logo")
     public ResponseEntity<Map<String, String>> uploadLogo(
             @RequestParam("file") MultipartFile file) throws IOException {

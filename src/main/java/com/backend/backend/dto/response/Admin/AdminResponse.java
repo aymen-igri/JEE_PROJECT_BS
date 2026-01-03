@@ -1,6 +1,7 @@
 package com.backend.backend.dto.response.Admin;
 
 import com.backend.backend.enums.EGender;
+import com.backend.backend.enums.EStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ public record AdminResponse(
         String email,
         String phone,
         LocalDateTime createdAt,
-        String profilePhoto
+        String profilePhoto,
+        EStatus status
 ) {
 }
