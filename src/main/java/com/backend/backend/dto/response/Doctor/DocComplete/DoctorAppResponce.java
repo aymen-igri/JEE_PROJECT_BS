@@ -1,4 +1,4 @@
-package com.backend.backend.dto.response.Doctor;
+package com.backend.backend.dto.response.Doctor.DocComplete;
 
 import com.backend.backend.enums.ApplicationStatus;
 

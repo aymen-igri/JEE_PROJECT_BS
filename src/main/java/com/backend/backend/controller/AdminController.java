@@ -3,7 +3,7 @@ package com.backend.backend.controller;
 import com.backend.backend.dto.request.Admin.AdminAccResp;
 import com.backend.backend.dto.request.Admin.AdminSignupRequest;
 import com.backend.backend.dto.response.Admin.AdminResponse;
-import com.backend.backend.dto.response.Doctor.DoctorAppResponce;
+import com.backend.backend.dto.response.Doctor.DocComplete.DoctorAppResponce;
 import com.backend.backend.service.Admin.AdminService;
 import com.backend.backend.service.Admin.AdminDocAppRespService;
 import jakarta.validation.Valid;

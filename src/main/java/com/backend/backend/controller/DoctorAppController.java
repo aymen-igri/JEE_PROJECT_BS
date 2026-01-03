@@ -2,7 +2,7 @@ package com.backend.backend.controller;
 
 import com.backend.backend.dto.request.Auth.AuthRequest;
 import com.backend.backend.dto.request.Doctor.DoctorAppDataRequest;
-import com.backend.backend.dto.response.Doctor.DoctorAppResponce;
+import com.backend.backend.dto.response.Doctor.DocComplete.DoctorAppResponce;
 import com.backend.backend.service.Doctor.DoctorAppService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -10,9 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import tools.jackson.databind.ObjectMapper;
-
-import java.awt.*;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/doctor")

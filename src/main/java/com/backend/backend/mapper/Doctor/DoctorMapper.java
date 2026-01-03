@@ -1,12 +1,9 @@
 package com.backend.backend.mapper.Doctor;
 
-import com.backend.backend.dto.response.Doctor.DoctorAppResponce;
 import com.backend.backend.dto.response.Doctor.DoctorResponce;
 import com.backend.backend.entity.User.Doctor;
 import com.backend.backend.repository.user.DoctorRepository;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class DoctorMapper {

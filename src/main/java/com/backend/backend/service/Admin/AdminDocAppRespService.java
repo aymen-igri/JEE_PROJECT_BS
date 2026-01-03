@@ -1,7 +1,7 @@
 package com.backend.backend.service.Admin;
 
 import com.backend.backend.dto.request.Admin.AdminAccResp;
-import com.backend.backend.dto.response.Doctor.DoctorAppResponce;
+import com.backend.backend.dto.response.Doctor.DocComplete.DoctorAppResponce;
 import com.backend.backend.entity.User.Doctor;
 import com.backend.backend.entity.activity.ActivityLog;
 import com.backend.backend.entity.practice.DoctorApplication;
@@ -14,7 +14,6 @@ import com.backend.backend.repository.user.DoctorRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.Console;
 import java.time.LocalDateTime;
 import java.util.UUID;
 

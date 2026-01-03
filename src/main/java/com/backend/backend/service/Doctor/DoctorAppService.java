@@ -2,7 +2,7 @@ package com.backend.backend.service.Doctor;
 
 import com.backend.backend.dto.request.Auth.AuthRequest;
 import com.backend.backend.dto.request.Doctor.DoctorAppDataRequest;
-import com.backend.backend.dto.response.Doctor.DoctorAppResponce;
+import com.backend.backend.dto.response.Doctor.DocComplete.DoctorAppResponce;
 import com.backend.backend.entity.activity.ActivityLog;
 import com.backend.backend.entity.practice.DoctorApplication;
 import com.backend.backend.enums.ApplicationStatus;
@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -150,5 +151,9 @@ public class DoctorAppService {
         );
 
         return doctorAppMapper.toAppDTO(savedApp);
+    }
+
+    public List<DoctorAppResponce> getAllApplications(){
+        return doctorAppRepository.findAll().stream().map(doctorAppMapper::toAppDTO).toList();
     }
 }

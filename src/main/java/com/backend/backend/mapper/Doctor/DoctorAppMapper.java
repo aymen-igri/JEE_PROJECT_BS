@@ -2,7 +2,7 @@ package com.backend.backend.mapper.Doctor;
 
 import com.backend.backend.dto.request.Admin.AdminAccResp;
 import com.backend.backend.dto.request.Doctor.DoctorAppDataRequest;
-import com.backend.backend.dto.response.Doctor.DoctorAppResponce;
+import com.backend.backend.dto.response.Doctor.DocComplete.DoctorAppResponce;
 import com.backend.backend.entity.User.Admin;
 import com.backend.backend.entity.User.Doctor;
 import com.backend.backend.entity.practice.DoctorApplication;
