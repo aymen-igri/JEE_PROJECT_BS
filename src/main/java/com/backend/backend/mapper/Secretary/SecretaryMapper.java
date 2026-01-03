@@ -36,11 +36,13 @@ public class SecretaryMapper {
                 secretary.getFullName(),
                 secretary.getCIN(),
                 secretary.getDateOfBirth(),
+                secretary.getCreatedAt(),
                 secretary.getGender(),
                 secretary.getAddress(),
                 secretary.getEmail(),
                 secretary.getPhone(),
-                secretary.getProfilePhoto()
+                secretary.getProfilePhoto(),
+                secretary.getStatus()
         );
     }
 }

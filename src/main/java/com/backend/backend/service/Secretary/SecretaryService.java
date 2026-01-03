@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class SecretaryService {
@@ -40,6 +41,14 @@ public class SecretaryService {
         this.userRepository = userRepository;
         this.activityLogRepository = activityLogRepository;
         this.emailService = emailService;
+    }
+
+    @Transactional
+    public List<SecretaryResponse> getAllSecretaries() {
+        List<Secretary> secretaries = secretaryRepository.findAll();
+        return secretaries.stream()
+                .map(secretaryMapper::toSecretaryDTO)
+                .toList();
     }
 
     @Transactional

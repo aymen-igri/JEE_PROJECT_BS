@@ -26,6 +26,11 @@ public class AdminController {
         this.appReponseService = appReponseService;
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllAdmins() {
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.getAllAdmins());
+    }
+
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     @PostMapping("/createAccount")
     public ResponseEntity<?> createAccount(

@@ -26,6 +26,11 @@ public class DoctorController {
         this.doctorService = doctorService;
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllDoctors() {
+        return ResponseEntity.status(HttpStatus.OK).body(doctorService.getAllDoctors());
+    }
+
     @GetMapping("/me")
     public ResponseEntity<DoctorInfoResponse> getMyInfo(Principal principal) {
         DoctorInfoResponse doctor = doctorService.getDoctorByUsername(principal.getName());
