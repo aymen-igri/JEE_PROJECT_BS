@@ -57,5 +57,6 @@ public class Subscription extends AuditableEntity {
     @Column(name = "cancelled_by")
     private Integer cancelledBy;
 
+
     //  createdAt inherited from AuditableEntity
 }

@@ -30,7 +30,8 @@ public interface CabinetRepository extends JpaRepository<Cabinet, UUID> {
 
     @Query("SELECT c FROM Cabinet c JOIN FETCH c.doctor WHERE c.cabinetId = :cabinetId")
     Optional<Cabinet> findByIdWithOwner(@Param("cabinetId") UUID cabinetId);
-
+    @Query("SELECT c FROM Cabinet c WHERE c.doctor.userId = :doctorId AND c.status = 'ACTIVE'")
+    Optional<Cabinet> findActiveCabinetByDoctorId(UUID doctorId);
     boolean existsByDoctorUserId(UUID doctorId);
 }
 

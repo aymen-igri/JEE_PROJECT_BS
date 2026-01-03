@@ -64,6 +64,7 @@ public class DataInitializer implements CommandLineRunner {
         } else {
             System.out.println("Test Doctor already exists.");
         }
+
     }
 }
 
