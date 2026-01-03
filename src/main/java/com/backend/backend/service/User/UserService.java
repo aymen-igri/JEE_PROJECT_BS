@@ -2,12 +2,14 @@ package com.backend.backend.service.User;
 
 import com.backend.backend.dto.request.User.VerifDuplRequest;
 import com.backend.backend.dto.response.User.UserResponce;
+import com.backend.backend.enums.EStatus;
 import com.backend.backend.mapper.User.UserMapper;
 import com.backend.backend.repository.practice.DoctorApplicationRepository;
 import com.backend.backend.repository.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -47,5 +49,13 @@ public class UserService {
 
     public List<UserResponce> getAllUsers(){
         return userRepository.findAll().stream().map(userMapper::toUserResponce).toList();
+    }
+
+    public UserResponce suspendUser(UUID id){
+        var user = userRepository.findUserByUserId(id)
+                .orElseThrow(()-> new IllegalArgumentException("User not found"));
+        user.setStatus(EStatus.SUSPENDED);
+        var savedUser = userRepository.save(user);
+        return userMapper.toUserResponce(savedUser);
     }
 }

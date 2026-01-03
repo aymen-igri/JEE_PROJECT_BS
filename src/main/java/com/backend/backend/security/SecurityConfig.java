@@ -46,8 +46,9 @@ public class SecurityConfig {
                                 "/api/secretary/all",
                                 "/api/doctor/all",
                                 "/api/admin/all",
-                                "/api/admin/createAccount").permitAll()
-                        .requestMatchers("/akfhsk").hasRole("SUPER_ADMIN")
+                                "/api/user/suspend",
+                                "/api/office/all").permitAll()
+                        .requestMatchers("/api/admin/createAccount").hasRole("SUPER_ADMIN")
                         .requestMatchers("/api/admin/changeStatus").hasRole("ADMIN")
                         .requestMatchers("/api/patient/create", "/api/patient/link").hasRole("SECRETARY")
                         .requestMatchers("/api/doctor/me").hasRole("DOCTOR")
