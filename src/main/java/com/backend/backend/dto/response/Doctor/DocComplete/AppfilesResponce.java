@@ -1,10 +1,10 @@
 package com.backend.backend.dto.response.Doctor.DocComplete;
 
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.core.io.Resource;
 
 public record AppfilesResponce(
-        MultipartFile diplomaDocument,
-        MultipartFile licenseDocument,
-        MultipartFile cvDocument
+        Resource diplomaDocument,
+        Resource licenseDocument,
+        Resource cvDocument
 ) {
 }

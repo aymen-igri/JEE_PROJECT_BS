@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import tools.jackson.databind.ObjectMapper;
 
 @RestController
-@RequestMapping("/api/doctor")
+@RequestMapping("/api/doctorApp")
 public class DoctorAppController {
 
     private final DoctorAppService doctorAppService;
@@ -21,6 +21,11 @@ public class DoctorAppController {
     public DoctorAppController(DoctorAppService doctorAppService) {
         this.doctorAppService = doctorAppService;
         this.objectMapper = new ObjectMapper();
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllApplications(){
+        return ResponseEntity.status(HttpStatus.OK).body(doctorAppService.getAllApplications());
     }
 
     @PostMapping(value = "/apply", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login",
                                 "/api/secretary/signup",
-                                "/api/doctor/apply",
+                                "/api/doctorApp/apply",
                                 "/api/user/checkExistence",
                                 "/api/user/all",
                                 "/api/secretary/all",
@@ -48,9 +48,12 @@ public class SecurityConfig {
                                 "/api/admin/all",
                                 "/api/user/suspend",
                                 "/api/office/all",
-                                "/api/activityLog/all").permitAll()
+                                "/api/activityLog/all",
+                                "/api/doctorApp/all",
+                                "/api/files/download",
+                                "/api/admin/changeStatus").permitAll()
                         .requestMatchers("/api/admin/createAccount").hasRole("SUPER_ADMIN")
-                        .requestMatchers("/api/admin/changeStatus").hasRole("ADMIN")
+                        .requestMatchers("/fjh").hasRole("ADMIN")
                         .requestMatchers("/api/patient/create", "/api/patient/link").hasRole("SECRETARY")
                         .requestMatchers("/api/doctor/me").hasRole("DOCTOR")
                         .anyRequest().authenticated()

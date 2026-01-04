@@ -72,6 +72,8 @@ public class AdminDocAppRespService {
             doctorLog.setEntityType("Doctor");
             doctorLog.setTimestamp(LocalDateTime.now());
             activityLogRepository.save(doctorLog);
+        }else if(savedApp.getStatus() == ApplicationStatus.REJECTED){
+            System.out.println("Application rejected for ID: " + applicationId + " Reason: " + savedApp.getRejectionReason());
         }
 
         return new DoctorAppResponce(

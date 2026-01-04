@@ -2,6 +2,7 @@ package com.backend.backend.service.Doctor;
 
 import com.backend.backend.dto.request.Auth.AuthRequest;
 import com.backend.backend.dto.request.Doctor.DoctorAppDataRequest;
+import com.backend.backend.dto.response.Doctor.ApplicationResponse;
 import com.backend.backend.dto.response.Doctor.DocComplete.DoctorAppResponce;
 import com.backend.backend.entity.activity.ActivityLog;
 import com.backend.backend.entity.practice.DoctorApplication;
@@ -153,7 +154,7 @@ public class DoctorAppService {
         return doctorAppMapper.toAppDTO(savedApp);
     }
 
-    public List<DoctorAppResponce> getAllApplications(){
-        return doctorAppRepository.findAll().stream().map(doctorAppMapper::toAppDTO).toList();
+    public List<ApplicationResponse> getAllApplications(){
+        return doctorAppRepository.findAll().stream().map(doctorAppMapper::toApplicationResponse).toList();
     }
 }

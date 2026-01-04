@@ -1,4 +1,4 @@
-package com.backend.backend.repository.Patient;
+package com.backend.backend.repository.patient;
 
 import com.backend.backend.entity.patient.Appointment;
 import com.backend.backend.enums.AppointmentStatus;
