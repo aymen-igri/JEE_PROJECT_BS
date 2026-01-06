@@ -19,6 +19,11 @@ public class SubscriptionController {
 
     private final SubscriptionService subscriptionService;
 
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllSubscriptions() {
+        return ResponseEntity.status(HttpStatus.OK).body(subscriptionService.getAllSubscription());
+    }
+
     @PostMapping
     public ResponseEntity<Subscription> createSubscription(
             @RequestBody CreateSubscriptionRequest request) {
@@ -48,7 +53,7 @@ public class SubscriptionController {
     @PutMapping("/{subscriptionId}/cancel")
     public ResponseEntity<Subscription> cancelSubscription(
             @PathVariable UUID subscriptionId,
-            @RequestParam Integer cancelledBy) {
+            @RequestParam UUID cancelledBy) {
 
         Subscription subscription = subscriptionService.cancelSubscription(
                 subscriptionId,

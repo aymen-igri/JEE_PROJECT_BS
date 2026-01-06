@@ -1,8 +1,10 @@
 package com.backend.backend.service.subscription;
 
+import com.backend.backend.dto.response.Subscription.SubscriptionResponse;
 import com.backend.backend.entity.practice.Cabinet;
 import com.backend.backend.entity.subscription.Subscription;
 import com.backend.backend.entity.subscription.SubscriptionPlan;
+import com.backend.backend.mapper.Subscription.SubscriptionMapper;
 import com.backend.backend.repository.practice.CabinetRepository;
 import com.backend.backend.repository.subscription.SubscriptionPlanRepository;
 import com.backend.backend.repository.subscription.SubscriptionRepository;
@@ -12,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,6 +26,14 @@ public class SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionPlanRepository subscriptionPlanRepository;
     private final CabinetRepository cabinetRepository;
+    private final SubscriptionMapper subscriptionMapper;
+
+    @Transactional
+    public List<SubscriptionResponse> getAllSubscription(){
+        return subscriptionRepository.findAll().stream()
+                .map(subscriptionMapper::toSubscriptionResponse).toList();
+    }
+
     @Transactional
     public Subscription createSubscription(UUID cabinetId, UUID planId) {
         SubscriptionPlan plan = subscriptionPlanRepository.findById(planId)
@@ -95,7 +107,7 @@ public class SubscriptionService {
     }
 
     @Transactional
-    public Subscription cancelSubscription(UUID subscriptionId, Integer cancelledBy) {
+    public Subscription cancelSubscription(UUID subscriptionId, UUID cancelledBy) {
         Subscription subscription = subscriptionRepository.findById(subscriptionId)
                 .orElseThrow(() -> new RuntimeException("Subscription not found"));
 

@@ -51,7 +51,13 @@ public class SecurityConfig {
                                 "/api/activityLog/all",
                                 "/api/doctorApp/all",
                                 "/api/files/download",
-                                "/api/admin/changeStatus").permitAll()
+                                "/api/admin/changeStatus",
+                                "/api/subscriptions/all",
+                                "/api/subscriptionPlan/all",
+                                "/api/subscriptionPlan/add",
+                                "/api/subscriptionPlan/update",
+                                "/api/payment/all",
+                                "/api/invoice/all").permitAll()
                         .requestMatchers("/api/admin/createAccount").hasRole("SUPER_ADMIN")
                         .requestMatchers("/fjh").hasRole("ADMIN")
                         .requestMatchers("/api/patient/create", "/api/patient/link").hasRole("SECRETARY")
