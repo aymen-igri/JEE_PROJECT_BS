@@ -52,7 +52,7 @@ public class SubscriptionController {
 
         Subscription subscription = subscriptionService.cancelSubscription(
                 subscriptionId,
-                cancelledBy
+                String.valueOf(cancelledBy)
         );
 
         return ResponseEntity.ok(subscription);

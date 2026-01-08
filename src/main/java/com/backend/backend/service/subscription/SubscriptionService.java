@@ -1,8 +1,10 @@
 package com.backend.backend.service.subscription;
 
+import com.backend.backend.dto.response.Subscription.SubscriptionResponse;
 import com.backend.backend.entity.practice.Cabinet;
 import com.backend.backend.entity.subscription.Subscription;
 import com.backend.backend.entity.subscription.SubscriptionPlan;
+import com.backend.backend.mapper.Subscription.SubscriptionMapper;
 import com.backend.backend.repository.practice.CabinetRepository;
 import com.backend.backend.repository.subscription.SubscriptionPlanRepository;
 import com.backend.backend.repository.subscription.SubscriptionRepository;
@@ -12,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,15 +25,25 @@ public class SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionPlanRepository subscriptionPlanRepository;
     private final CabinetRepository cabinetRepository;
+    private final SubscriptionMapper subscriptionMapper;
+
+    @Transactional
+    public List<SubscriptionResponse> getAllSubscription(){
+        return subscriptionRepository.findAll().stream()
+                .map(subscriptionMapper::toSubscriptionResponse).toList();
+    }
+
     @Transactional
     public Subscription createSubscription(UUID cabinetId, UUID planId) {
         SubscriptionPlan plan = subscriptionPlanRepository.findById(planId)
                 .orElseThrow(() -> new RuntimeException("Plan not found"));
         Optional<Cabinet> cabinetOptional = cabinetRepository.findByCabinetId(cabinetId);
-        Cabinet cabinet = cabinetOptional.get();
+        Cabinet cabinet = cabinetOptional.orElseThrow(() -> new RuntimeException("Cabinet not found"));
+
         if (!plan.getIsActive()) {
             throw new RuntimeException("Selected plan is not active");
         }
+
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime endDate = calculateEndDate(now, plan.getBillingCycle());
 
@@ -51,7 +64,8 @@ public class SubscriptionService {
         SubscriptionPlan plan = subscriptionPlanRepository.findById(planId)
                 .orElseThrow(() -> new RuntimeException("Plan not found"));
         Optional<Cabinet> cabinetOptional = cabinetRepository.findByCabinetId(cabinetId);
-        Cabinet cabinet = cabinetOptional.get();
+        Cabinet cabinet = cabinetOptional.orElseThrow(() -> new RuntimeException("Cabinet not found"));
+
         if (!plan.getIsActive()) {
             throw new RuntimeException("Selected plan is not active");
         }
@@ -59,6 +73,7 @@ public class SubscriptionService {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime endDate = calculateEndDate(now, plan.getBillingCycle());
         LocalDate today = LocalDate.now();
+
         Subscription subscription = new Subscription();
         subscription.setCabinet(cabinet);
         subscription.setPlan(plan);
@@ -69,7 +84,6 @@ public class SubscriptionService {
         subscription.setNextPaymentDate(endDate.toLocalDate());
         subscription.setLastPaymentDate(today);
         subscription.setGracePeriodEndDate(endDate.toLocalDate().plusDays(7));
-
 
         return subscriptionRepository.save(subscription);
     }
@@ -95,13 +109,13 @@ public class SubscriptionService {
     }
 
     @Transactional
-    public Subscription cancelSubscription(UUID subscriptionId, Integer cancelledBy) {
+    public Subscription cancelSubscription(UUID subscriptionId, String cancelledBy) {
         Subscription subscription = subscriptionRepository.findById(subscriptionId)
                 .orElseThrow(() -> new RuntimeException("Subscription not found"));
 
         subscription.setStatus("CANCELLED");
         subscription.setCancelledAt(LocalDate.now());
-        subscription.setCancelledBy(cancelledBy);
+        subscription.setCancelledBy(UUID.fromString(cancelledBy));
         subscription.setAutoRenew(false);
 
         return subscriptionRepository.save(subscription);
@@ -143,10 +157,10 @@ public class SubscriptionService {
                         sub.getEndDate().isAfter(LocalDateTime.now()))
                 .orElse(false);
     }
+
     public boolean hasEverSubscribed(UUID cabinetId) {
         return subscriptionRepository.existsByCabinetId(cabinetId);
     }
-
 
     public boolean needsSubscription(UUID cabinetId) {
         return !hasEverSubscribed(cabinetId);

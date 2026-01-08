@@ -55,7 +55,7 @@ public class Subscription extends AuditableEntity {
     private LocalDate cancelledAt;
 
     @Column(name = "cancelled_by")
-    private Integer cancelledBy;
+    private UUID cancelledBy;
 
 
     //  createdAt inherited from AuditableEntity

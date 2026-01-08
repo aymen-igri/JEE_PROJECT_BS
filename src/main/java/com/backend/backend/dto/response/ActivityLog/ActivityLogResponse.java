@@ -8,7 +8,7 @@ public record ActivityLogResponse(
         UUID id,
         String action,
         String entityType,
-        Integer entityId,
+        String entityId,
         Map<String, Object> details,
         String ipAddress,
         LocalDateTime timestamp,

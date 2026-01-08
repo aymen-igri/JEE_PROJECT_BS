@@ -18,9 +18,6 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, UUID
     @Query("SELECT s FROM Subscription s WHERE s.cabinet.cabinetId = :cabinetId")
     List<Subscription> findByCabinetId(UUID cabinetId);
 
-    // Check if cabinet has ever subscribed (for onboarding)
-    boolean existsByCabinet_Id(UUID cabinetId);
-
     // Alternative method name (Spring Data will understand both)
     @Query("SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END FROM Subscription s WHERE s.cabinet.cabinetId = :cabinetId")
     boolean existsByCabinetId(UUID cabinetId);

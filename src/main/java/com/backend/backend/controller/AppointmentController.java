@@ -101,6 +101,22 @@ public class AppointmentController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Allows a doctor to cancel their own appointment.
+     * Only the assigned doctor can cancel an appointment via this endpoint.
+     */
+    @PreAuthorize("hasRole('DOCTOR')")
+    @PutMapping("/{appointmentId}/doctor-cancel")
+    public ResponseEntity<AppointmentResponse> cancelAppointmentByDoctor(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable UUID appointmentId,
+            @RequestParam(required = false) String cancellationReason
+    ) {
+        UUID doctorId = userDetails.getUser().getUserId();
+        AppointmentResponse response = appointmentService.cancelAppointmentByDoctor(doctorId, appointmentId, cancellationReason);
+        return ResponseEntity.ok(response);
+    }
+
     @PreAuthorize("hasAnyRole('SECRETARY', 'DOCTOR')")
     @GetMapping("/{appointmentId}")
     public ResponseEntity<AppointmentResponse> getAppointmentById(

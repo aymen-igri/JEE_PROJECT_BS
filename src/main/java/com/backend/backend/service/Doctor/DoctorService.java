@@ -87,4 +87,23 @@ public class DoctorService {
     public boolean hasCabinet(UUID doctorId) {
         return cabinetRepository.existsByDoctorUserId(doctorId);
     }
+
+    // Statistics methods for dashboard
+    public long getTotalDoctorsCount() {
+        return doctorRepository.count();
+    }
+
+    public long getActiveDoctorsCount() {
+        return doctorRepository.countByStatus(com.backend.backend.enums.EStatus.ACTIVE);
+    }
+
+    public long getInactiveDoctorsCount() {
+        return doctorRepository.countByStatus(com.backend.backend.enums.EStatus.INACTIVE);
+    }
+
+    public double getInactiveDoctorsPercentage() {
+        long total = getTotalDoctorsCount();
+        if (total == 0) return 0.0;
+        return (getInactiveDoctorsCount() * 100.0) / total;
+    }
 }

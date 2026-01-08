@@ -93,4 +93,16 @@ public class SecretaryService {
         return secretaryMapper.toSecretaryDTO(savedSecretary);
     }
 
+    // Statistics methods for dashboard
+    public long getTotalSecretariesCount() {
+        return secretaryRepository.count();
+    }
+
+    public long getActiveSecretariesCount() {
+        return secretaryRepository.countByStatus(com.backend.backend.enums.EStatus.ACTIVE);
+    }
+
+    public long getInactiveSecretariesCount() {
+        return secretaryRepository.countByStatus(com.backend.backend.enums.EStatus.INACTIVE);
+    }
 }

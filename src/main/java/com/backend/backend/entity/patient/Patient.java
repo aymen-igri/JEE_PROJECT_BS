@@ -50,4 +50,6 @@ public class Patient {
 
     @Column(name = "registration_date", nullable = false)
     private LocalDate registrationDate;
+
+
 }

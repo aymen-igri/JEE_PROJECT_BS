@@ -74,4 +74,7 @@ public interface DoctorApplicationRepository extends JpaRepository<DoctorApplica
             @Param("rejectionReason") String rejectionReason
     );
     Optional<DoctorApplication> findByApplicationIdAndStatus(UUID applicationId, ApplicationStatus status);
+
+    // Statistics methods
+    long countByStatus(ApplicationStatus status);
 }

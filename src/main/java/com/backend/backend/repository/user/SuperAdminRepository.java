@@ -1,4 +1,3 @@
-
 package com.backend.backend.repository.user;
 
 
@@ -25,5 +24,7 @@ public interface SuperAdminRepository extends JpaRepository<SuperAdmin, UUID> {
 
     SuperAdmin findByUserId(UUID userId);
     SuperAdmin findByUsername(String username);
+
+    SuperAdmin getSuperAdminByUserId(UUID userId);
 }
 
