@@ -1,4 +1,3 @@
-
 package com.backend.backend.repository.user;
 
 import com.backend.backend.entity.User.Secretary;
@@ -46,4 +45,8 @@ public interface SecretaryRepository extends JpaRepository<Secretary, UUID> {
 
     @Query("SELECT COUNT(a) FROM Appointment a WHERE a.scheduledBySecretary.userId = :secretaryId")
     Long countAppointmentsScheduledBy(@Param("secretaryId") UUID secretaryId);
+
+    // Statistics methods
+    long countByStatus(EStatus status);
 }
+

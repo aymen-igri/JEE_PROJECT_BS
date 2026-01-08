@@ -26,6 +26,9 @@ public interface DoctorApplicationRepository extends JpaRepository<DoctorApplica
     boolean existsByCinAndStatus(String cin, String status);
     boolean existsByEmailAndStatus(String email, String status);
 
+    boolean existsByEmail(String email);
+    boolean existsByUsername(String username);
+
     boolean existsByUsernameAndStatus(String username, String status);
 
     boolean existsByLicenseNumberAndStatus(String licenseNumber, String status);
@@ -71,4 +74,7 @@ public interface DoctorApplicationRepository extends JpaRepository<DoctorApplica
             @Param("rejectionReason") String rejectionReason
     );
     Optional<DoctorApplication> findByApplicationIdAndStatus(UUID applicationId, ApplicationStatus status);
+
+    // Statistics methods
+    long countByStatus(ApplicationStatus status);
 }

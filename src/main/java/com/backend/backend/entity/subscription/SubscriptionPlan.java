@@ -24,7 +24,7 @@ public class SubscriptionPlan extends AuditableEntity {
     private UUID planId;
 
     @Column(name = "created_by")
-    private Integer createdBy;
+    private UUID createdBy;
 
     @Column(name = "plan_name", nullable = false, unique = true, length = 100)
     private String planName;
@@ -48,5 +48,4 @@ public class SubscriptionPlan extends AuditableEntity {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
-    // createdAt inherited from AuditableEntity
 }

@@ -1,6 +1,7 @@
 package com.backend.backend.mapper.Admin;
 
 import com.backend.backend.dto.request.Admin.AdminRequest;
+import com.backend.backend.dto.request.Admin.AdminURequest;
 import com.backend.backend.dto.response.Admin.AdminResponse;
 import com.backend.backend.entity.User.Admin;
 import com.backend.backend.entity.User.SuperAdmin;
@@ -21,7 +22,7 @@ public class AdminMapper {
         this.superAdminRepository = superAdminRepository;
     }
 
-    public Admin toAdmin(AdminRequest adminRequest){
+    public Admin toAdmin(AdminRequest adminRequest, UUID registeredBy){
 
         Admin admin = new Admin();
 
@@ -32,7 +33,23 @@ public class AdminMapper {
         admin.setAddress(adminRequest.address());
         admin.setEmail(adminRequest.email());
         admin.setPhone(adminRequest.phone());
-        admin.setRegisteredBySuperAdmin(superAdminRepository.findByUserId(adminRequest.registeredBy()));
+        admin.setRegisteredBySuperAdmin(superAdminRepository.findByUserId(registeredBy));
+
+        return admin;
+    }
+
+    public Admin toAUpdate(AdminURequest adminRequest, UUID adminId){
+
+        Admin admin = adminRepository.findById(adminId).orElseThrow(
+                () -> new RuntimeException("Admin not found")
+        );
+
+        admin.setFullName(adminRequest.fullName());
+        admin.setCIN(adminRequest.CIN());
+        admin.setDateOfBirth(adminRequest.dateOfBirth());
+        admin.setGender(adminRequest.gender());
+        admin.setAddress(adminRequest.address());
+        admin.setPhone(adminRequest.phone());
 
         return admin;
     }
@@ -49,7 +66,8 @@ public class AdminMapper {
                 admin.getEmail(),
                 admin.getPhone(),
                 admin.getCreatedAt(),
-                admin.getProfilePhoto()
+                admin.getProfilePhoto(),
+                admin.getStatus()
         );
     }
 }

@@ -15,6 +15,8 @@ import com.backend.backend.mapper.Appointment.AppointmentMapper;
 import com.backend.backend.repository.activity.ActivityLogRepository;
 import com.backend.backend.repository.Patient.AppointmentRepository;
 import com.backend.backend.repository.Patient.PatientRepository;
+import com.backend.backend.repository.activity.ActivityLogRepository;
+
 import com.backend.backend.repository.practice.CabinetRepository;
 import com.backend.backend.repository.user.DoctorRepository;
 import com.backend.backend.repository.user.SecretaryRepository;

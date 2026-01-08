@@ -1,4 +1,3 @@
-
 // ============================================
 // DOCTOR REPOSITORY
 // ============================================
@@ -16,6 +15,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.print.Doc;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +26,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, UUID>,
         JpaSpecificationExecutor<Doctor> {
 
     Doctor findDoctorByUserId(UUID userId);
-    
+    Optional<Doctor> findByUsername(String username);
     boolean existsByEmail(String email);
     boolean existsByCIN(String cin);
     boolean existsByUsername(String username);
@@ -145,5 +145,10 @@ public interface DoctorRepository extends JpaRepository<Doctor, UUID>,
             "  AND a.status NOT IN ('CANCELLED', 'NO_SHOW')" +
             ")")
     Page<Doctor> findAvailableDoctorsPaged(@Param("date") LocalDate date, Pageable pageable);
+
+    Optional<Doctor> findByEmail(String email);
+
+    // Statistics methods
+    long countByStatus(EStatus status);
 }
 

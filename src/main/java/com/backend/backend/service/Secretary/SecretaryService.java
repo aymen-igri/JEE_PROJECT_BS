@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class SecretaryService {
@@ -40,6 +41,14 @@ public class SecretaryService {
         this.userRepository = userRepository;
         this.activityLogRepository = activityLogRepository;
         this.emailService = emailService;
+    }
+
+    @Transactional
+    public List<SecretaryResponse> getAllSecretaries() {
+        List<Secretary> secretaries = secretaryRepository.findAll();
+        return secretaries.stream()
+                .map(secretaryMapper::toSecretaryDTO)
+                .toList();
     }
 
     @Transactional
@@ -84,4 +93,16 @@ public class SecretaryService {
         return secretaryMapper.toSecretaryDTO(savedSecretary);
     }
 
+    // Statistics methods for dashboard
+    public long getTotalSecretariesCount() {
+        return secretaryRepository.count();
+    }
+
+    public long getActiveSecretariesCount() {
+        return secretaryRepository.countByStatus(com.backend.backend.enums.EStatus.ACTIVE);
+    }
+
+    public long getInactiveSecretariesCount() {
+        return secretaryRepository.countByStatus(com.backend.backend.enums.EStatus.INACTIVE);
+    }
 }

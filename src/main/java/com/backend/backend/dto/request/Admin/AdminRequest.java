@@ -34,10 +34,7 @@ public record AdminRequest(
 
         @NotBlank(message = "Phone number is required")
         @Size(min = 9, max = 9)
-        String phone,
-
-        @NotNull(message = "Super Admin Id is required")
-        UUID registeredBy
+        String phone
 ) {
 }
 

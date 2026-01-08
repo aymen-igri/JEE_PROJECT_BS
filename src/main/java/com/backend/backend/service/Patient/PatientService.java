@@ -2,7 +2,6 @@ package com.backend.backend.service.Patient;
 
 import com.backend.backend.dto.request.Patient.CreatePatientRequest;
 import com.backend.backend.dto.request.Patient.DoctorPatientLinkRequest;
-import com.backend.backend.dto.response.Patient.CreatePatientResponse;
 import com.backend.backend.dto.response.Patient.DoctorPatientLinkResponse;
 import com.backend.backend.dto.response.Patient.PatientResponse;
 import com.backend.backend.entity.activity.ActivityLog;
@@ -17,6 +16,8 @@ import com.backend.backend.repository.activity.ActivityLogRepository;
 import com.backend.backend.repository.user.SecretaryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

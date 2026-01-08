@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.UUID;
 
 public class CustomUserDetails implements UserDetails {
     private final User user;
@@ -41,8 +42,8 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        // Return email as username
-        return user.getEmail(); // Make sure your User entity has this method
+
+        return user.getEmail();
     }
 
     @Override
@@ -67,5 +68,9 @@ public class CustomUserDetails implements UserDetails {
 
     public User getUser() {
         return user;
+    }
+
+    public UUID getUserId() {
+        return user.getUserId();
     }
 }

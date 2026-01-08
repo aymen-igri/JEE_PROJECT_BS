@@ -2,16 +2,21 @@ package com.backend.backend.mapper.Doctor;
 
 import com.backend.backend.dto.request.Admin.AdminAccResp;
 import com.backend.backend.dto.request.Doctor.DoctorAppDataRequest;
-import com.backend.backend.dto.response.Doctor.DoctorAppResponce;
+import com.backend.backend.dto.response.Doctor.ApplicationResponse;
+import com.backend.backend.dto.response.Doctor.DocComplete.AppfilesResponce;
+import com.backend.backend.dto.response.Doctor.DocComplete.DoctorAppResponce;
 import com.backend.backend.entity.User.Admin;
 import com.backend.backend.entity.User.Doctor;
 import com.backend.backend.entity.practice.DoctorApplication;
 import com.backend.backend.enums.EStatus;
 import com.backend.backend.repository.user.AdminRepository;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Component;
 
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Component
 public class DoctorAppMapper {
@@ -41,10 +46,10 @@ public class DoctorAppMapper {
 
     }
 
-    public DoctorApplication toUpdatedApplication(DoctorApplication application, AdminAccResp response){
+    public DoctorApplication toUpdatedApplication(DoctorApplication application, AdminAccResp response, UUID processedBy){
 
         application.setStatus(response.status());
-        application.setProcessedByAdmin(adminRepository.findAdminByUserId(response.processedBy()));
+        application.setProcessedByAdmin(adminRepository.findAdminByUserId(processedBy));
         if (response.rejectionReason() != null) {
             application.setRejectionReason(response.rejectionReason());
         } else {
@@ -98,6 +103,30 @@ public class DoctorAppMapper {
                 application.getStatus(),
                 application.getApplicationDate()
         );
+    }
 
+    public AppfilesResponce toAppFilesDTO(String diplomaPath, String licensePath, String cvPath) {
+
+        Path uploadDir = Path.of("uploads/doctor-applications");
+        return new AppfilesResponce(
+                new FileSystemResource(uploadDir.resolve(diplomaPath).toFile()),
+                new FileSystemResource(uploadDir.resolve(licensePath).toFile()),
+                new FileSystemResource(uploadDir.resolve(cvPath).toFile())
+        );
+    }
+
+    public ApplicationResponse toApplicationResponse(DoctorApplication doctorApplication) {
+
+        DoctorAppResponce doctorAppResponce = toAppDTO(doctorApplication);
+        AppfilesResponce appfilesResponce = toAppFilesDTO(
+                doctorApplication.getDiplomaDocument(),
+                doctorApplication.getLicenseDocument(),
+                doctorApplication.getCvDocument()
+        );
+
+        return new ApplicationResponse(
+                doctorAppResponce,
+                appfilesResponce
+        );
     }
 }

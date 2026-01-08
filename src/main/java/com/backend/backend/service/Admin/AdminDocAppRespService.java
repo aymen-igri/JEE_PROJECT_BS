@@ -1,7 +1,8 @@
 package com.backend.backend.service.Admin;
 
 import com.backend.backend.dto.request.Admin.AdminAccResp;
-import com.backend.backend.dto.response.Doctor.DoctorAppResponce;
+import com.backend.backend.dto.response.Doctor.DocComplete.DoctorAppResponce;
+import com.backend.backend.entity.User.Admin;
 import com.backend.backend.entity.User.Doctor;
 import com.backend.backend.entity.activity.ActivityLog;
 import com.backend.backend.entity.practice.DoctorApplication;
@@ -14,7 +15,6 @@ import com.backend.backend.repository.user.DoctorRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.Console;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -42,7 +42,7 @@ public class AdminDocAppRespService {
     }
 
     @Transactional
-    public DoctorAppResponce changeStatus(UUID applicationId, AdminAccResp adminResponse){
+    public DoctorAppResponce changeStatus(UUID applicationId, AdminAccResp adminResponse, UUID adminId) {
 
         DoctorApplication application = doctorAppRepository.findDoctorApplicationByApplicationId(applicationId);
 
@@ -52,12 +52,14 @@ public class AdminDocAppRespService {
             throw new IllegalArgumentException("Can't change the status, the application is " + application.getStatus());
         }
 
-        DoctorApplication updatedApp = doctorAppMapper.toUpdatedApplication(application,adminResponse);
+        Admin admin = adminRepository.findAdminByUserId(adminId);
+        DoctorApplication updatedApp = doctorAppMapper.toUpdatedApplication(application,adminResponse, adminId);
+        updatedApp.setProcessedByAdmin(admin);
         DoctorApplication savedApp = doctorAppRepository.save(updatedApp);
         System.out.println("application status changed to " + savedApp.getStatus());
 
         ActivityLog appLog = new ActivityLog();
-        appLog.setUser(adminRepository.findAdminByUserId(adminResponse.processedBy()));
+        appLog.setUser(adminRepository.findAdminByUserId(savedApp.getProcessedByAdmin().getUserId()));
         appLog.setAction("Changed doctor application status to " + adminResponse.status());
         appLog.setEntityType("DoctorApplication");
         appLog.setTimestamp(LocalDateTime.now());
@@ -65,14 +67,16 @@ public class AdminDocAppRespService {
 
         // create doctor account if application is approved
         if (savedApp.getStatus() == ApplicationStatus.APPROVED){
-            Doctor doctorAcc = doctorAppMapper.toDoctor(updatedApp, adminRepository.findAdminByUserId(adminResponse.processedBy()));
+            Doctor doctorAcc = doctorAppMapper.toDoctor(updatedApp, adminRepository.findAdminByUserId(savedApp.getProcessedByAdmin().getUserId()));
             doctorRepository.save(doctorAcc);
             ActivityLog doctorLog = new ActivityLog();
-            doctorLog.setUser(adminRepository.findAdminByUserId(adminResponse.processedBy()));
+            doctorLog.setUser(adminRepository.findAdminByUserId(savedApp.getProcessedByAdmin().getUserId()));
             doctorLog.setAction("Doctor with ID: " + doctorAcc.getUserId() + " account created.");
             doctorLog.setEntityType("Doctor");
             doctorLog.setTimestamp(LocalDateTime.now());
             activityLogRepository.save(doctorLog);
+        }else if(savedApp.getStatus() == ApplicationStatus.REJECTED){
+            System.out.println("Application rejected for ID: " + applicationId + " Reason: " + savedApp.getRejectionReason());
         }
 
         return new DoctorAppResponce(

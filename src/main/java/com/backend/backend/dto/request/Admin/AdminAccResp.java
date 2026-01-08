@@ -7,9 +7,6 @@ import java.util.UUID;
 
 public record AdminAccResp(
 
-        @NotNull(message = "ProcessedBy is required")
-        UUID processedBy,
-
         @NotNull(message = "The new status is required")
         ApplicationStatus status,
 

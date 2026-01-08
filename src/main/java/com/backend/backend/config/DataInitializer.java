@@ -39,6 +39,7 @@ public class DataInitializer implements CommandLineRunner {
     private final MedicalRecordRepository medicalRecordRepository;
     private final CabinetRepository cabinetRepository;
     private final PasswordEncoder passwordEncoder;
+    private final DoctorRepository doctorRepository;
 
     @Override
     @Transactional
@@ -72,6 +73,28 @@ public class DataInitializer implements CommandLineRunner {
         } else {
             System.out.println("Super Admin already exists.");
         }
+        Doctor existingDoctor = doctorRepository.findByUsername("testdoctor").orElse(null);
+
+        if(existingDoctor == null){
+            Doctor doctor = new Doctor();
+            doctor.setFullName("Saiid Farhan");
+            doctor.setCIN("WC405");
+            doctor.setDateOfBirth(LocalDate.of(1985, 5, 15));
+            doctor.setGender(EGender.HOMME);
+            doctor.setAddress("204, Rue Arahma Quartier Tarchman, Casablanca");
+            doctor.setEmail("SaiidFarhaan450@gmail.com");
+            doctor.setUsername("testdoctor");
+            doctor.setPassword("{bcrypt}" + passwordEncoder.encode("doctor123"));
+            doctor.setPhone("0645432313");
+            doctor.setStatus(EStatus.ACTIVE);
+            doctor.setSpecialty("Cardiology");
+            doctor.setLicenseNumber("LIC-2025-001");
+            doctorRepository.save(doctor);
+            System.out.println("Test Doctor created.");
+        } else {
+            System.out.println("Test Doctor already exists.");
+        }
+
     }
 
     private Admin createAdminIfNotExists() {
@@ -218,3 +241,4 @@ public class DataInitializer implements CommandLineRunner {
         }
     }
 }
+
