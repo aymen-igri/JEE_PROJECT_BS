@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class SubscriptionPlanService {
@@ -33,8 +34,9 @@ public class SubscriptionPlanService {
     }
 
     @Transactional
-    public SubscriptionPlanResponse addNewSP(SubscriptionPlanRequest planRequest) {
+    public SubscriptionPlanResponse addNewSP(SubscriptionPlanRequest planRequest, UUID createdBy) {
         SubscriptionPlan subscriptionPlan = subscriptionPlanMapper.toSP(planRequest);
+        subscriptionPlan.setCreatedBy(createdBy);
         SubscriptionPlan savedPlan = subscriptionPlanRepository.save(subscriptionPlan);
         return subscriptionPlanMapper.toSPDTO(savedPlan);
     }

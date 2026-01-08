@@ -137,5 +137,8 @@ public interface DoctorRepository extends JpaRepository<Doctor, UUID>,
     Page<Doctor> findAvailableDoctorsPaged(@Param("date") LocalDate date, Pageable pageable);
 
     Optional<Doctor> findByEmail(String email);
+
+    // Statistics methods
+    long countByStatus(EStatus status);
 }
 

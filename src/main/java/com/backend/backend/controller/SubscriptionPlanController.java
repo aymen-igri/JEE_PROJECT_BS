@@ -2,9 +2,14 @@ package com.backend.backend.controller;
 
 import com.backend.backend.dto.request.subscription.SubscriptionPlanRequest;
 import com.backend.backend.dto.request.subscription.UpdateSPRequest;
+import com.backend.backend.entity.User.User;
+import com.backend.backend.security.CustomUserDetails;
 import com.backend.backend.service.subscription.SubscriptionPlanService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/subscriptionPlan")
@@ -23,9 +28,11 @@ public class SubscriptionPlanController {
 
     @PostMapping("/add")
     public ResponseEntity<?> addNewSP(
+            @AuthenticationPrincipal CustomUserDetails comUser,
             @RequestBody SubscriptionPlanRequest request
     ) throws Exception{
-        return ResponseEntity.ok(subscriptionPlanService.addNewSP(request));
+        UUID userId = comUser.getUser().getUserId();
+        return ResponseEntity.ok(subscriptionPlanService.addNewSP(request, userId));
     }
 
     @PatchMapping("/update")

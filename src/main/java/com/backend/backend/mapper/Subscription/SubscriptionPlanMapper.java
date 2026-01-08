@@ -23,7 +23,7 @@ public class SubscriptionPlanMapper {
         SubscriptionPlan subscriptionPlan = new SubscriptionPlan();
         subscriptionPlan.setPlanName(request.planName());
         subscriptionPlan.setPrice(request.price());
-        subscriptionPlan.setCreatedBy(request.createdBy());
+        // createdBy is set by the service from the authenticated user
         subscriptionPlan.setBillingCycle(request.billingCycle());
         subscriptionPlan.setMaxDoctors(request.maxDoctors());
         subscriptionPlan.setMaxSecretary(request.maxSecretary());
@@ -34,22 +34,19 @@ public class SubscriptionPlanMapper {
 
     public SubscriptionPlan toSPUpdate(UpdateSPRequest request) {
 
-        if(!subscriptionPlanRepository.existsById(request.id())) {
-            throw new IllegalArgumentException("Subscription Plan with ID " + request.id() + " does not exist.");
-        }
+        SubscriptionPlan subscriptionPlan = subscriptionPlanRepository.findById(request.id())
+                .orElseThrow(() -> new IllegalArgumentException("Subscription Plan with ID " + request.id() + " does not exist."));
 
-        SubscriptionPlan subscriptionPlan = new SubscriptionPlan();
-
-        subscriptionPlan.setPlanId(request.id());
+        // Update only the fields that should be modified
         subscriptionPlan.setPlanName(request.planName());
         subscriptionPlan.setPrice(request.price());
-        subscriptionPlan.setCreatedBy(request.createdBy());
         subscriptionPlan.setBillingCycle(request.billingCycle());
         subscriptionPlan.setMaxDoctors(request.maxDoctors());
         subscriptionPlan.setMaxSecretary(request.maxSecretary());
         subscriptionPlan.setFeatures(request.features());
         subscriptionPlan.setIsActive(request.isActive());
         subscriptionPlan.setUpdatedAt(LocalDateTime.now());
+        // createdBy and createdAt remain unchanged from the original
 
         return subscriptionPlan;
     }

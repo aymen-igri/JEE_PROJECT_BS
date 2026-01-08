@@ -157,4 +157,21 @@ public class DoctorAppService {
     public List<ApplicationResponse> getAllApplications(){
         return doctorAppRepository.findAll().stream().map(doctorAppMapper::toApplicationResponse).toList();
     }
+
+    // Statistics methods for dashboard
+    public long getTotalApplicationsCount() {
+        return doctorAppRepository.count();
+    }
+
+    public long getPendingApplicationsCount() {
+        return doctorAppRepository.countByStatus(ApplicationStatus.PENDING);
+    }
+
+    public long getApprovedApplicationsCount() {
+        return doctorAppRepository.countByStatus(ApplicationStatus.APPROVED);
+    }
+
+    public long getRejectedApplicationsCount() {
+        return doctorAppRepository.countByStatus(ApplicationStatus.REJECTED);
+    }
 }

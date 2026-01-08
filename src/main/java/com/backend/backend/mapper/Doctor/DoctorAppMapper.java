@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Component
 public class DoctorAppMapper {
@@ -45,10 +46,10 @@ public class DoctorAppMapper {
 
     }
 
-    public DoctorApplication toUpdatedApplication(DoctorApplication application, AdminAccResp response){
+    public DoctorApplication toUpdatedApplication(DoctorApplication application, AdminAccResp response, UUID processedBy){
 
         application.setStatus(response.status());
-        application.setProcessedByAdmin(adminRepository.findAdminByUserId(response.processedBy()));
+        application.setProcessedByAdmin(adminRepository.findAdminByUserId(processedBy));
         if (response.rejectionReason() != null) {
             application.setRejectionReason(response.rejectionReason());
         } else {

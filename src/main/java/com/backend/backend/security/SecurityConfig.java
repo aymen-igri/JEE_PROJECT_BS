@@ -41,25 +41,30 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/login",
                                 "/api/secretary/signup",
                                 "/api/doctorApp/apply",
-                                "/api/user/checkExistence",
-                                "/api/user/all",
+                                "/api/user/checkExistence").permitAll()
+                        .requestMatchers("/api/admin/createAccount",
+                                "/api/admin/all",
+                                "/api/subscriptionPlan/add",
+                                "/api/superAdmin/me",
+                                "/api/superAdmin/updateInfo").hasRole("SUPER_ADMIN")
+                        .requestMatchers("/api/admin/me",
+                                "/api/admin/updateInfo").hasRole("ADMIN")
+                        .requestMatchers("/api/user/all",
                                 "/api/secretary/all",
                                 "/api/doctor/all",
-                                "/api/admin/all",
-                                "/api/user/suspend",
                                 "/api/office/all",
                                 "/api/activityLog/all",
                                 "/api/doctorApp/all",
-                                "/api/files/download",
                                 "/api/admin/changeStatus",
                                 "/api/subscriptions/all",
                                 "/api/subscriptionPlan/all",
-                                "/api/subscriptionPlan/add",
-                                "/api/subscriptionPlan/update",
                                 "/api/payment/all",
-                                "/api/invoice/all").permitAll()
-                        .requestMatchers("/api/admin/createAccount").hasRole("SUPER_ADMIN")
-                        .requestMatchers("/fjh").hasRole("ADMIN")
+                                "/api/invoice/all",
+                                "/api/files/download",
+                                "/api/user/suspend",
+                                "/api/statistics/doctors",
+                                "/api/statistics/secretaries",
+                                "/api/subscriptionPlan/update").hasAnyRole("SUPER_ADMIN", "ADMIN")
                         .requestMatchers("/api/patient/create", "/api/patient/link").hasRole("SECRETARY")
                         .requestMatchers("/api/doctor/me").hasRole("DOCTOR")
                         .anyRequest().authenticated()
@@ -111,7 +116,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
 

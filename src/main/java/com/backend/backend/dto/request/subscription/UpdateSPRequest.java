@@ -9,12 +9,10 @@ public record UpdateSPRequest(
         UUID id,
         String planName,
         BigDecimal price,
-        UUID createdBy,
         String billingCycle,
         Integer maxDoctors,
         Integer maxSecretary,
         List<String> features,
-        Boolean isActive,
-        LocalDateTime updatedAt
+        Boolean isActive
 ) {
 }
