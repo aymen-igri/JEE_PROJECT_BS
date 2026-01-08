@@ -101,17 +101,27 @@ public interface DoctorRepository extends JpaRepository<Doctor, UUID>,
     @Query("SELECT d.userId, d.fullName, SIZE(d.cabinets) FROM Doctor d " +
             "GROUP BY d.userId, d.fullName")
     List<Object[]> countCabinetsPerDoctor();
+
+    /**
+     * Find doctors who have consultations created in a specific period.
+     * Since consultations no longer have dates, we use createdAt timestamp.
+     */
     @Query("SELECT DISTINCT d FROM Doctor d " +
             "INNER JOIN Consultation c ON c.doctor.userId = d.userId " +
-            "WHERE c.consultationDate BETWEEN :startDate AND :endDate")
+            "WHERE CAST(c.createdAt AS LocalDate) BETWEEN :startDate AND :endDate")
     List<Doctor> findDoctorsWithConsultationsInPeriod(
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    /**
+     * Count consultations per doctor in a specific period.
+     * Since consultations no longer have dates, we use createdAt timestamp.
+     */
     @Query("SELECT d.userId, d.fullName, COUNT(c) as consultationCount " +
             "FROM Doctor d " +
             "LEFT JOIN Consultation c ON c.doctor.userId = d.userId " +
-            "AND c.consultationDate BETWEEN :startDate AND :endDate " +
+            "AND CAST(c.createdAt AS LocalDate) BETWEEN :startDate AND :endDate " +
             "GROUP BY d.userId, d.fullName " +
             "ORDER BY consultationCount DESC")
     List<Object[]> countConsultationsPerDoctorInPeriod(
@@ -119,6 +129,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, UUID>,
             @Param("endDate") LocalDate endDate,
             Pageable pageable
     );
+
     @Query("SELECT d FROM Doctor d WHERE d.status = com.backend.backend.enums.EStatus.ACTIVE " +
             "AND d.userId NOT IN (" +
             "  SELECT a.doctor.userId FROM Appointment a " +

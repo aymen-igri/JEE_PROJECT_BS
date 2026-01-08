@@ -55,9 +55,6 @@ public class Cabinet extends AuditableEntity {
     private BigDecimal defaultConsultPrice;
 
 
-    @Column(name = "created_by")
-    private Integer createdBy;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;

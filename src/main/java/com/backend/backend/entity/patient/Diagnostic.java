@@ -1,10 +1,17 @@
 package com.backend.backend.entity.patient;
 import com.backend.backend.entity.Base.AuditableEntity;
+import com.backend.backend.enums.Severity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
+/**
+ * Diagnostic entity - represents a diagnosis for a consultation.
+ * Many diagnostics can belong to one consultation.
+ * Each diagnostic has its own date since consultations can span multiple appointments.
+ */
 @Entity
 @Table(name = "diagnostics")
 @Getter
@@ -20,8 +27,14 @@ public class Diagnostic extends AuditableEntity {
     private UUID diagnosisId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "consultation_id", insertable = false, updatable = false)
+    @JoinColumn(name = "consultation_id")
     private Consultation consultation;
+
+    /**
+     * Date when this diagnosis was made.
+     */
+    @Column(name = "diagnosis_date", nullable = false)
+    private LocalDate diagnosisDate;
 
     @Column(name = "diagnosis", nullable = false, columnDefinition = "TEXT")
     private String diagnosis;
@@ -29,8 +42,9 @@ public class Diagnostic extends AuditableEntity {
     @Column(name = "diagnosis_code", length = 20)
     private String diagnosisCode;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "severity", length = 20)
-    private String severity;
+    private Severity severity;
 
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;

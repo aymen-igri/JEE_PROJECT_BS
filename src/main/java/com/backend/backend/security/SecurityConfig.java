@@ -33,10 +33,31 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
+                        // Public endpoints
                         .requestMatchers("/api/auth/login", "/api/secretary/signup", "/api/doctor/apply", "/api/user/checkExistence").permitAll()
+
+                        // Super Admin endpoints
                         .requestMatchers("/api/admin/createAccount").hasRole("SUPER_ADMIN")
+
+                        // Admin endpoints (ADMIN and SUPER_ADMIN)
                         .requestMatchers("/api/admin/changeStatus").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/medicaments/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+
+                        // Secretary endpoints
                         .requestMatchers("/api/patient/create", "/api/patient/link").hasRole("SECRETARY")
+                        .requestMatchers("/api/billings", "/api/billings/my-billings", "/api/billings/cabinet/**").hasRole("SECRETARY")
+
+                        // Secretary and Doctor shared endpoints
+                        .requestMatchers("/api/billings/*/receipt", "/api/billings/consultation/*").hasAnyRole("SECRETARY", "DOCTOR")
+                        .requestMatchers("/api/appointments/**").hasAnyRole("SECRETARY", "DOCTOR")
+
+                        // Doctor endpoints - Consultation, Diagnostic, Prescription management
+                        .requestMatchers("/api/consultations/**").hasRole("DOCTOR")
+                        .requestMatchers("/api/diagnostics/**").hasRole("DOCTOR")
+                        .requestMatchers("/api/prescriptions/**").hasRole("DOCTOR")
+                        .requestMatchers("/api/billings/doctor/**").hasRole("DOCTOR")
+
+                        // All other endpoints require authentication
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.disable())
