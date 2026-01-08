@@ -2,8 +2,11 @@ package com.backend.backend.entity.perscription;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.UUID;
+
 @Entity
-@Table(name = "analyses")
+@Table(name = "analysis")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,10 +17,10 @@ public class Analysis {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "analysis_id")
-    private Integer analysisId;
+    private UUID analysisId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "prescription_id", insertable = false, updatable = false)
+    @JoinColumn(name = "prescription_id")
     private Prescription prescription;
 
     @Column(name = "analysis_type", length = 100)

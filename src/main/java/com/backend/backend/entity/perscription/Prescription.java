@@ -22,7 +22,7 @@ public class Prescription extends AuditableEntity {
     private UUID prescriptionId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "consultation_id", insertable = false, updatable = false)
+    @JoinColumn(name = "consultation_id")
     private Consultation consultation;
     @Column(name = "dosage", length = 100)
     private String dosage;

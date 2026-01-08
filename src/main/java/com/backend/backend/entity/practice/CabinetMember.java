@@ -20,9 +20,10 @@ public class CabinetMember {
     @Column(name = "member_id")
     private UUID memberId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private Staff user;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cabinet_id", insertable = false, updatable = false)
