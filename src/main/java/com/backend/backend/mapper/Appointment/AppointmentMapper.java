@@ -5,16 +5,19 @@ import com.backend.backend.dto.response.Appointment.AppointmentResponse;
 import com.backend.backend.entity.User.Doctor;
 import com.backend.backend.entity.User.Secretary;
 import com.backend.backend.entity.patient.Appointment;
+import com.backend.backend.entity.patient.Consultation;
 import com.backend.backend.entity.patient.Patient;
 import com.backend.backend.entity.practice.Cabinet;
 import com.backend.backend.enums.AppointmentStatus;
+import com.backend.backend.enums.PaymentStatus;
 import org.springframework.stereotype.Component;
 
+/**
+ * Mapper for Appointment entity.
+ * Billing is per appointment, not per consultation.
+ */
 @Component
 public class AppointmentMapper {
-
-
-
 
     public Appointment toAppointment(CreateAppointmentRequest request) {
         Appointment appointment = new Appointment();
@@ -25,6 +28,7 @@ public class AppointmentMapper {
         appointment.setReason(request.reason());
         appointment.setNotes(request.notes());
         appointment.setStatus(AppointmentStatus.SCHEDULED);
+        appointment.setPaymentStatus(PaymentStatus.PENDING);
 
         return appointment;
     }
@@ -34,6 +38,7 @@ public class AppointmentMapper {
         Doctor doctor = appointment.getDoctor();
         Cabinet cabinet = appointment.getCabinet();
         Secretary secretary = appointment.getScheduledBySecretary();
+        Consultation consultation = appointment.getConsultation();
 
         return new AppointmentResponse(
                 appointment.getAppointmentId(),
@@ -43,12 +48,15 @@ public class AppointmentMapper {
                 doctor != null ? doctor.getFullName() : null,
                 cabinet != null ? cabinet.getCabinetId() : null,
                 cabinet != null ? cabinet.getName() : null,
+                consultation != null ? consultation.getConsultationId() : null,
                 appointment.getAppointmentDateTime(),
                 appointment.getDuration(),
                 appointment.getAppointmentType(),
                 appointment.getStatus(),
                 appointment.getReason(),
                 appointment.getNotes(),
+                appointment.getPrice(),
+                appointment.getPaymentStatus(),
                 secretary != null ? secretary.getUserId() : null,
                 secretary != null ? secretary.getFullName() : null,
                 appointment.getCreatedAt(),
