@@ -39,6 +39,7 @@ public interface ConsultationRepository extends JpaRepository<Consultation, UUID
      * Find consultation by ID - ownership validated.
      * SECURITY: Ensures doctor can only access their own consultations.
      */
+        
     @Query("SELECT c FROM Consultation c " +
            "JOIN FETCH c.patient " +
            "WHERE c.consultationId = :id AND c.doctor.userId = :doctorId")
@@ -46,6 +47,15 @@ public interface ConsultationRepository extends JpaRepository<Consultation, UUID
             @Param("id") UUID id,
             @Param("doctorId") UUID doctorId
     );
+        
+            @Query("SELECT c FROM Consultation c " +
+            "LEFT JOIN FETCH c.record r " +
+            "LEFT JOIN FETCH r.patient p " +
+            "LEFT JOIN FETCH c.doctor " +
+            "WHERE c.doctor.userId = :doctorId " +
+            "ORDER BY c.updatedAt DESC")
+    List<Consultation> findLatestConsultationsWithDetails(@Param("doctorId") UUID doctorId);
+}
 
     // ==================== OWNERSHIP VALIDATION ====================
 
