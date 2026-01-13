@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {
-
+     
 
     @Query("SELECT a FROM Appointment a " +
            "JOIN FETCH a.patient " +
@@ -27,7 +27,20 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
            "LEFT JOIN FETCH a.scheduledBySecretary " +
            "WHERE a.appointmentId = :appointmentId")
     Optional<Appointment> findByAppointmentIdWithDetails(@Param("appointmentId") UUID appointmentId);
-
+    
+ @Query("SELECT a FROM Appointment a " +
+            "LEFT JOIN FETCH a.patient p " +
+            "LEFT JOIN FETCH a.doctor " +
+            "LEFT JOIN FETCH a.cabinet " +
+            "WHERE a.doctor.userId = :doctorId " +
+            "AND a.status IN :statuses " +
+            "AND a.appointmentDateTime > :now " +
+            "ORDER BY a.appointmentDateTime ASC")
+    List<Appointment> findUpcomingAppointments(
+            @Param("doctorId") UUID doctorId,
+            @Param("statuses") Set<AppointmentStatus> statuses,
+            @Param("now") LocalDateTime now
+    );
     @Query("SELECT a FROM Appointment a " +
            "JOIN FETCH a.patient " +
            "JOIN FETCH a.cabinet " +
