@@ -66,6 +66,7 @@ public class ConsultationService {
 
     @Value("${app.diagnostic.grace-period-minutes:30}")
     private int gracePeriodMinutes;
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("M/d/yyyy");
 
     public ConsultationService(
             ConsultationRepository consultationRepository,
@@ -307,12 +308,72 @@ public class ConsultationService {
      * @param pageable Pagination parameters
      * @return Page of ConsultationResponse
      */
+
+
+
+
+    
+    /* MISSING CODE*/
     @Transactional(readOnly = true)
     public Page<ConsultationResponse> getConsultationsByStatus(UUID doctorId, ConsultationStatus status, Pageable pageable) {
         return consultationRepository.findByDoctorIdAndStatusPaged(doctorId, status, pageable)
                 .map(consultationMapper::toResponse);
     }
+     @Transactional(readOnly = true)
+    public List<ConsultationCardDTO> getLatestConsultationsForDoctor(UUID doctorId) {
+        List<Consultation> consultations = consultationRepository
+                .findLatestConsultationsWithDetails(doctorId);
 
+        // Limit to 9
+        return consultations.stream()
+                .limit(9)
+                .map(this::mapToConsultationCardDTO)
+                .collect(Collectors.toList());
+    }
+
+    private ConsultationCardDTO mapToConsultationCardDTO(Consultation consultation) {
+        Patient patient = consultation.getRecord() != null ?
+                consultation.getRecord().getPatient() : null;
+
+        if (patient == null) {
+            // Fallback if patient data is missing
+            return new ConsultationCardDTO(
+                    consultation.getConsultationId(),
+                    "Unknown Patient",
+                    "",
+                    "",
+                    "",
+                    consultation.getNotes() != null ? consultation.getNotes() : "",
+                    consultation.getStatus() != null ? consultation.getStatus() : "UNKNOWN"
+            );
+        }
+
+        String patientName = (patient.getFirstName() != null ? patient.getFirstName() : "") +
+                " " +
+                (patient.getLastName() != null ? patient.getLastName() : "");
+
+        String dateOfBirth = patient.getDateOfBirth() != null ?
+                patient.getDateOfBirth().format(DATE_FORMATTER) : "";
+
+        String sex = patient.getGender() != null ? patient.getGender().toString() :  "";
+
+        String phone = patient.getPhone() != null ? patient.getPhone() : "";
+
+        String notes = consultation.getNotes() != null ? consultation.getNotes() : "";
+
+        String status = consultation.getStatus() != null ? consultation.getStatus() : "PENDING";
+
+        return new ConsultationCardDTO(
+                consultation.getConsultationId(),
+                patientName.trim(),
+                dateOfBirth,
+                sex,
+                phone,
+                notes,
+                status
+        );
+    } 
+    
     /**
      * Logs an activity for audit trail.
      * Logs are INSERT only - never modified or deleted.
