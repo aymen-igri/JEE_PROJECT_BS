@@ -17,7 +17,7 @@ public class CabinetMapper {
                 cabinet.getPhone(),
                 cabinet.getStatus(),
                 cabinet.getDefaultConsultPrice(),
-                cabinet.getCreatedBy(),
+                cabinet.getDoctor().getUserId(),
                 cabinet.getCreatedAt()
         );
     }

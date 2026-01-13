@@ -10,7 +10,7 @@ import com.backend.backend.dto.response.Patient.PatientResponse;
 import com.backend.backend.entity.patient.DoctorPatientLink;
 import com.backend.backend.entity.patient.MedicalRecord;
 import com.backend.backend.entity.patient.Patient;
-import com.backend.backend.repository.Patient.PatientRepository;
+import com.backend.backend.repository.patient.PatientRepository;
 import com.backend.backend.repository.user.DoctorRepository;
 import com.backend.backend.repository.user.SecretaryRepository;
 import org.springframework.stereotype.Component;

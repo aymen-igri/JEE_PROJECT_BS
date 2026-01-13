@@ -48,14 +48,12 @@ public interface ConsultationRepository extends JpaRepository<Consultation, UUID
             @Param("doctorId") UUID doctorId
     );
         
-            @Query("SELECT c FROM Consultation c " +
-            "LEFT JOIN FETCH c.record r " +
-            "LEFT JOIN FETCH r.patient p " +
+    @Query("SELECT c FROM Consultation c " +
+            "LEFT JOIN FETCH c.patient p " +
             "LEFT JOIN FETCH c.doctor " +
             "WHERE c.doctor.userId = :doctorId " +
             "ORDER BY c.updatedAt DESC")
     List<Consultation> findLatestConsultationsWithDetails(@Param("doctorId") UUID doctorId);
-}
 
     // ==================== OWNERSHIP VALIDATION ====================
 

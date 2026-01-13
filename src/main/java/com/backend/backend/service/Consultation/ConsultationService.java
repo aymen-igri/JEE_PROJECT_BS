@@ -2,6 +2,7 @@ package com.backend.backend.service.Consultation;
 
 import com.backend.backend.dto.request.Consultation.CreateConsultationRequest;
 import com.backend.backend.dto.request.Consultation.UpdateConsultationRequest;
+import com.backend.backend.dto.response.Consultation.ConsultationCardDTO;
 import com.backend.backend.dto.response.Consultation.ConsultationDetailResponse;
 import com.backend.backend.dto.response.Consultation.ConsultationResponse;
 import com.backend.backend.dto.response.Consultation.DiagnosticResponse;
@@ -18,7 +19,7 @@ import com.backend.backend.enums.ConsultationStatus;
 import com.backend.backend.mapper.Consultation.ConsultationMapper;
 import com.backend.backend.mapper.Consultation.DiagnosticMapper;
 import com.backend.backend.mapper.Consultation.PrescriptionMapper;
-import com.backend.backend.repository.Patient.PatientRepository;
+import com.backend.backend.repository.patient.PatientRepository;
 import com.backend.backend.repository.activity.ActivityLogRepository;
 import com.backend.backend.repository.consultation.ConsultationRepository;
 import com.backend.backend.repository.consultation.DiagnosticRepository;
@@ -30,6 +31,7 @@ import com.backend.backend.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,7 +68,7 @@ public class ConsultationService {
 
     @Value("${app.diagnostic.grace-period-minutes:30}")
     private int gracePeriodMinutes;
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("M/d/yyyy");
+    private static final DateFormatter DATE_FORMATTER = new DateFormatter("M/d/yyyy");
 
     public ConsultationService(
             ConsultationRepository consultationRepository,
@@ -332,8 +334,8 @@ public class ConsultationService {
     }
 
     private ConsultationCardDTO mapToConsultationCardDTO(Consultation consultation) {
-        Patient patient = consultation.getRecord() != null ?
-                consultation.getRecord().getPatient() : null;
+        Patient patient = consultation.getPatient() != null ?
+                consultation.getPatient() : null;
 
         if (patient == null) {
             // Fallback if patient data is missing
@@ -344,7 +346,7 @@ public class ConsultationService {
                     "",
                     "",
                     consultation.getNotes() != null ? consultation.getNotes() : "",
-                    consultation.getStatus() != null ? consultation.getStatus() : "UNKNOWN"
+                    consultation.getStatus() != null ? consultation.getStatus().toString() : "UNKNOWN"
             );
         }
 
@@ -353,7 +355,7 @@ public class ConsultationService {
                 (patient.getLastName() != null ? patient.getLastName() : "");
 
         String dateOfBirth = patient.getDateOfBirth() != null ?
-                patient.getDateOfBirth().format(DATE_FORMATTER) : "";
+                patient.getDateOfBirth().toString() : "";
 
         String sex = patient.getGender() != null ? patient.getGender().toString() :  "";
 
@@ -361,7 +363,7 @@ public class ConsultationService {
 
         String notes = consultation.getNotes() != null ? consultation.getNotes() : "";
 
-        String status = consultation.getStatus() != null ? consultation.getStatus() : "PENDING";
+        String status = consultation.getStatus() != null ? consultation.getStatus().toString() : "PENDING";
 
         return new ConsultationCardDTO(
                 consultation.getConsultationId(),

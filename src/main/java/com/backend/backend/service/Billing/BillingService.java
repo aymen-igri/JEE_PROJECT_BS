@@ -11,7 +11,7 @@ import com.backend.backend.enums.PaymentStatus;
 import com.backend.backend.mapper.Billing.BillingMapper;
 import com.backend.backend.repository.activity.ActivityLogRepository;
 import com.backend.backend.repository.billing.AppointmentBillingRepository;
-import com.backend.backend.repository.Patient.AppointmentRepository;
+import com.backend.backend.repository.patient.AppointmentRepository;
 import com.backend.backend.repository.user.SecretaryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

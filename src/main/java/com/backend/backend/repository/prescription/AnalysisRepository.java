@@ -4,7 +4,6 @@ import com.backend.backend.entity.perscription.Analysis;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,7 +17,7 @@ import java.util.UUID;
  * Note: Analysis entity uses Integer ID - consider migrating to UUID for consistency.
  */
 @Repository
-public interface AnalysisRepository extends JpaRepository<Analysis, Integer> {
+public interface AnalysisRepository extends JpaRepository<Analysis, UUID> {
 
     // ==================== BASIC QUERIES ====================
 

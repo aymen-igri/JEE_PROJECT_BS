@@ -9,8 +9,8 @@ import com.backend.backend.entity.patient.Patient;
 import com.backend.backend.entity.practice.Cabinet;
 import com.backend.backend.enums.EGender;
 import com.backend.backend.enums.EStatus;
-import com.backend.backend.repository.Patient.MedicalRecordRepository;
-import com.backend.backend.repository.Patient.PatientRepository;
+import com.backend.backend.repository.patient.MedicalRecordRepository;
+import com.backend.backend.repository.patient.PatientRepository;
 import com.backend.backend.repository.practice.CabinetRepository;
 import com.backend.backend.repository.user.AdminRepository;
 import com.backend.backend.repository.user.DoctorRepository;
@@ -39,7 +39,6 @@ public class DataInitializer implements CommandLineRunner {
     private final MedicalRecordRepository medicalRecordRepository;
     private final CabinetRepository cabinetRepository;
     private final PasswordEncoder passwordEncoder;
-    private final DoctorRepository doctorRepository;
 
     @Override
     @Transactional
