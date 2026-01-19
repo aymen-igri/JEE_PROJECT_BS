@@ -1,133 +1,174 @@
-package com.backend.backend.repository.Patient;
+package com.backend.backend.repository.patient;
 
 import com.backend.backend.entity.patient.Appointment;
 import com.backend.backend.enums.AppointmentStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {
 
-    // Find current appointment (happening now - IN_PROGRESS status)
+
     @Query("SELECT a FROM Appointment a " +
-            "LEFT JOIN FETCH a.patient p " +
-            "LEFT JOIN FETCH a.doctor " +
-            "LEFT JOIN FETCH a.cabinet " +
-            "WHERE a.doctor.userId = :doctorId " +
-            "AND a.status = :status " +
-            "AND a.appointmentDateTime <= :now " +
-            "ORDER BY a.appointmentDateTime DESC")
-    Optional<Appointment> findCurrentAppointment(
+           "JOIN FETCH a.patient " +
+           "JOIN FETCH a.doctor " +
+           "JOIN FETCH a.cabinet " +
+           "LEFT JOIN FETCH a.scheduledBySecretary " +
+           "WHERE a.appointmentId = :appointmentId")
+    Optional<Appointment> findByAppointmentIdWithDetails(@Param("appointmentId") UUID appointmentId);
+
+    @Query("SELECT a FROM Appointment a " +
+           "JOIN FETCH a.patient " +
+           "JOIN FETCH a.cabinet " +
+           "WHERE a.doctor.userId = :doctorId " +
+           "AND a.status NOT IN :excludedStatuses " +
+           "ORDER BY a.appointmentDateTime ASC")
+    List<Appointment> findByDoctorUserIdWithDetails(
             @Param("doctorId") UUID doctorId,
-            @Param("status") AppointmentStatus status,
-            @Param("now") LocalDateTime now
+            @Param("excludedStatuses") Collection<AppointmentStatus> excludedStatuses
     );
 
-    // Find next upcoming appointments
     @Query("SELECT a FROM Appointment a " +
-            "LEFT JOIN FETCH a.patient p " +
-            "LEFT JOIN FETCH a.doctor " +
-            "LEFT JOIN FETCH a.cabinet " +
-            "WHERE a.doctor.userId = :doctorId " +
-            "AND a.status IN :statuses " +
-            "AND a.appointmentDateTime > :now " +
-            "ORDER BY a.appointmentDateTime ASC")
-    List<Appointment> findUpcomingAppointments(
-            @Param("doctorId") UUID doctorId,
-            @Param("statuses") Set<AppointmentStatus> statuses,
-            @Param("now") LocalDateTime now
+           "JOIN FETCH a.doctor " +
+           "JOIN FETCH a.cabinet " +
+           "WHERE a.patient.patientId = :patientId " +
+           "AND a.status NOT IN :excludedStatuses " +
+           "ORDER BY a.appointmentDateTime DESC")
+    List<Appointment> findByPatientPatientIdWithDetails(
+            @Param("patientId") UUID patientId,
+            @Param("excludedStatuses") Collection<AppointmentStatus> excludedStatuses
     );
 
-    // Existing methods from your AppointmentService
     @Query("SELECT a FROM Appointment a " +
-            "WHERE a.doctor.userId = :doctorId " +
-            "AND a.appointmentDateTime >= :rangeStart " +
-            "AND a.appointmentDateTime < :rangeEnd " +
-            "AND a.status NOT IN :excludedStatuses")
+           "JOIN FETCH a.patient " +
+           "JOIN FETCH a.doctor " +
+           "JOIN FETCH a.cabinet " +
+           "WHERE a.scheduledBySecretary.userId = :secretaryId " +
+           "AND a.status NOT IN :excludedStatuses " +
+           "ORDER BY a.appointmentDateTime DESC")
+    List<Appointment> findByScheduledBySecretaryUserIdWithDetails(
+            @Param("secretaryId") UUID secretaryId,
+            @Param("excludedStatuses") Collection<AppointmentStatus> excludedStatuses
+    );
+
+    // ==================== PAGINATED QUERIES ====================
+
+    @Query("SELECT a FROM Appointment a " +
+           "JOIN FETCH a.patient " +
+           "JOIN FETCH a.cabinet " +
+           "WHERE a.doctor.userId = :doctorId " +
+           "AND a.status NOT IN :excludedStatuses")
+    Page<Appointment> findByDoctorUserIdWithDetailsPaged(
+            @Param("doctorId") UUID doctorId,
+            @Param("excludedStatuses") Collection<AppointmentStatus> excludedStatuses,
+            Pageable pageable
+    );
+
+    @Query("SELECT a FROM Appointment a " +
+           "JOIN FETCH a.doctor " +
+           "JOIN FETCH a.cabinet " +
+           "WHERE a.patient.patientId = :patientId " +
+           "AND a.status NOT IN :excludedStatuses")
+    Page<Appointment> findByPatientPatientIdWithDetailsPaged(
+            @Param("patientId") UUID patientId,
+            @Param("excludedStatuses") Collection<AppointmentStatus> excludedStatuses,
+            Pageable pageable
+    );
+
+    // ==================== CONFLICT DETECTION ====================
+
+    @Query("SELECT a FROM Appointment a " +
+           "WHERE a.doctor.userId = :doctorId " +
+           "AND a.appointmentDateTime >= :rangeStart " +
+           "AND a.appointmentDateTime < :rangeEnd " +
+           "AND a.status NOT IN :excludedStatuses")
     List<Appointment> findPotentialConflicts(
             @Param("doctorId") UUID doctorId,
             @Param("rangeStart") LocalDateTime rangeStart,
             @Param("rangeEnd") LocalDateTime rangeEnd,
-            @Param("excludedStatuses") List<String> excludedStatuses
+            @Param("excludedStatuses") Collection<AppointmentStatus> excludedStatuses
     );
 
     @Query("SELECT a FROM Appointment a " +
-            "WHERE a.cabinet.cabinetId = :cabinetId " +
-            "AND a.appointmentDateTime >= :rangeStart " +
-            "AND a.appointmentDateTime < :rangeEnd " +
-            "AND a.status NOT IN :excludedStatuses")
+           "WHERE a.cabinet.cabinetId = :cabinetId " +
+           "AND a.appointmentDateTime >= :rangeStart " +
+           "AND a.appointmentDateTime < :rangeEnd " +
+           "AND a.status NOT IN :excludedStatuses")
     List<Appointment> findCabinetConflicts(
             @Param("cabinetId") UUID cabinetId,
             @Param("rangeStart") LocalDateTime rangeStart,
             @Param("rangeEnd") LocalDateTime rangeEnd,
-            @Param("excludedStatuses") List<String> excludedStatuses
+            @Param("excludedStatuses") Collection<AppointmentStatus> excludedStatuses
     );
 
-    @Query("SELECT a FROM Appointment a " +
-            "LEFT JOIN FETCH a.patient " +
-            "LEFT JOIN FETCH a.doctor " +
-            "LEFT JOIN FETCH a.cabinet " +
-            "LEFT JOIN FETCH a.scheduledBySecretary " +
-            "WHERE a.appointmentId = :appointmentId")
-    Optional<Appointment> findByAppointmentIdWithDetails(@Param("appointmentId") UUID appointmentId);
+    // ==================== UTILITY METHODS ====================
 
-    @Query("SELECT a FROM Appointment a " +
-            "LEFT JOIN FETCH a.patient " +
-            "LEFT JOIN FETCH a.doctor " +
-            "LEFT JOIN FETCH a.cabinet " +
-            "WHERE a.scheduledBySecretary.userId = :secretaryId " +
-            "AND (:excludedStatuses IS NULL OR a.status NOT IN :excludedStatuses)")
-    List<Appointment> findByScheduledBySecretaryUserIdWithDetails(
-            @Param("secretaryId") UUID secretaryId,
-            @Param("excludedStatuses") Set<AppointmentStatus> excludedStatuses
-    );
+    // Count methods
+    long countByDoctor_UserIdAndStatus(UUID doctorId, AppointmentStatus status);
 
+    long countByDoctor_UserIdAndStatusIn(UUID doctorId, Collection<AppointmentStatus> statuses);
+
+    long countByCabinet_CabinetIdAndStatus(UUID cabinetId, AppointmentStatus status);
+
+    // Upcoming appointments
     @Query("SELECT a FROM Appointment a " +
-            "LEFT JOIN FETCH a.patient " +
-            "LEFT JOIN FETCH a.doctor " +
-            "LEFT JOIN FETCH a.cabinet " +
-            "WHERE a.doctor.userId = :doctorId " +
-            "AND a.appointmentDateTime > :now " +
-            "AND a.status IN :statuses " +
-            "ORDER BY a.appointmentDateTime ASC")
+           "JOIN FETCH a.patient " +
+           "JOIN FETCH a.cabinet " +
+           "WHERE a.doctor.userId = :doctorId " +
+           "AND a.appointmentDateTime >= :fromDateTime " +
+           "AND a.status IN :activeStatuses " +
+           "ORDER BY a.appointmentDateTime ASC")
     List<Appointment> findUpcomingByDoctorUserId(
             @Param("doctorId") UUID doctorId,
-            @Param("now") LocalDateTime now,
-            @Param("statuses") Set<AppointmentStatus> statuses
+            @Param("fromDateTime") LocalDateTime fromDateTime,
+            @Param("activeStatuses") Collection<AppointmentStatus> activeStatuses
     );
 
+    // Today's appointments
     @Query("SELECT a FROM Appointment a " +
-            "LEFT JOIN FETCH a.patient " +
-            "LEFT JOIN FETCH a.doctor " +
-            "LEFT JOIN FETCH a.cabinet " +
-            "WHERE a.doctor.userId = :doctorId " +
-            "AND a.appointmentDateTime >= :dayStart " +
-            "AND a.appointmentDateTime <= :dayEnd " +
-            "AND a.status NOT IN :excludedStatuses " +
-            "ORDER BY a.appointmentDateTime ASC")
+           "JOIN FETCH a.patient " +
+           "JOIN FETCH a.cabinet " +
+           "WHERE a.doctor.userId = :doctorId " +
+           "AND a.appointmentDateTime >= :dayStart " +
+           "AND a.appointmentDateTime < :dayEnd " +
+           "AND a.status NOT IN :excludedStatuses " +
+           "ORDER BY a.appointmentDateTime ASC")
     List<Appointment> findTodayByDoctorUserId(
             @Param("doctorId") UUID doctorId,
             @Param("dayStart") LocalDateTime dayStart,
             @Param("dayEnd") LocalDateTime dayEnd,
-            @Param("excludedStatuses") Set<AppointmentStatus> excludedStatuses
+            @Param("excludedStatuses") Collection<AppointmentStatus> excludedStatuses
     );
 
-    @Query("SELECT a FROM Appointment a " +
-            "LEFT JOIN FETCH a.patient " +
-            "LEFT JOIN FETCH a.doctor " +
-            "LEFT JOIN FETCH a.cabinet " +
-            "WHERE a.patient.patientId = :patientId " +
-            "AND (:excludedStatuses IS NULL OR a.status NOT IN :excludedStatuses)")
-    List<Appointment> findByPatientPatientIdWithDetails(
-            @Param("patientId") UUID patientId,
-            @Param("excludedStatuses") Set<AppointmentStatus> excludedStatuses
+    // Status update methods
+    @Modifying
+    @Query("UPDATE Appointment a SET a.status = :status WHERE a.appointmentId = :appointmentId")
+    int updateStatus(
+            @Param("appointmentId") UUID appointmentId,
+            @Param("status") AppointmentStatus status
     );
+
+    @Modifying
+    @Query("UPDATE Appointment a SET a.status = :status, a.notes = :notes WHERE a.appointmentId = :appointmentId")
+    int updateStatusWithNotes(
+            @Param("appointmentId") UUID appointmentId,
+            @Param("status") AppointmentStatus status,
+            @Param("notes") String notes
+    );
+
+    // Ownership verification methods
+    boolean existsByAppointmentIdAndDoctor_UserId(UUID appointmentId, UUID doctorId);
+
+    boolean existsByAppointmentIdAndScheduledBySecretary_UserId(UUID appointmentId, UUID secretaryId);
 }
