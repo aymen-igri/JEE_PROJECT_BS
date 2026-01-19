@@ -38,35 +38,31 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)  // Add this
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login",
-                                "/api/secretary/signup",
-                                "/api/doctorApp/apply",
-                                "/api/user/checkExistence").permitAll()
-                        .requestMatchers("/api/admin/createAccount",
-                                "/api/admin/all",
-                                "/api/subscriptionPlan/add",
-                                "/api/superAdmin/me",
-                                "/api/superAdmin/updateInfo").hasRole("SUPER_ADMIN")
-                        .requestMatchers("/api/admin/me",
-                                "/api/admin/updateInfo").hasRole("ADMIN")
-                        .requestMatchers("/api/user/all",
-                                "/api/secretary/all",
-                                "/api/doctor/all",
-                                "/api/office/all",
-                                "/api/activityLog/all",
-                                "/api/doctorApp/all",
-                                "/api/admin/changeStatus",
-                                "/api/subscriptions/all",
-                                "/api/subscriptionPlan/all",
-                                "/api/payment/all",
-                                "/api/invoice/all",
-                                "/api/files/download",
-                                "/api/user/suspend",
-                                "/api/statistics/doctors",
-                                "/api/statistics/secretaries",
-                                "/api/subscriptionPlan/update").hasAnyRole("SUPER_ADMIN", "ADMIN")
+                        // Public endpoints
+                        .requestMatchers("/api/auth/login", "/api/secretary/signup", "/api/doctor/apply", "/api/user/checkExistence").permitAll()
+
+                        // Super Admin endpoints
+                        .requestMatchers("/api/admin/createAccount").hasRole("SUPER_ADMIN")
+
+                        // Admin endpoints (ADMIN and SUPER_ADMIN)
+                        .requestMatchers("/api/admin/changeStatus").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/medicaments/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+
+                        // Secretary endpoints
                         .requestMatchers("/api/patient/create", "/api/patient/link").hasRole("SECRETARY")
-                        .requestMatchers("/api/doctor/me").hasRole("DOCTOR")
+                        .requestMatchers("/api/billings", "/api/billings/my-billings", "/api/billings/cabinet/**").hasRole("SECRETARY")
+
+                        // Secretary and Doctor shared endpoints
+                        .requestMatchers("/api/billings/*/receipt", "/api/billings/consultation/*").hasAnyRole("SECRETARY", "DOCTOR")
+                        .requestMatchers("/api/appointments/**").hasAnyRole("SECRETARY", "DOCTOR")
+
+                        // Doctor endpoints - Consultation, Diagnostic, Prescription management
+                        .requestMatchers("/api/consultations/**").hasRole("DOCTOR")
+                        .requestMatchers("/api/diagnostics/**").hasRole("DOCTOR")
+                        .requestMatchers("/api/prescriptions/**").hasRole("DOCTOR")
+                        .requestMatchers("/api/billings/doctor/**").hasRole("DOCTOR")
+
+                        // All other endpoints require authentication
                         .anyRequest().authenticated()
                 ).exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {

@@ -69,6 +69,22 @@ public class AppointmentController {
         return ResponseEntity.ok(appointments);
     }
 
+    /**
+     * Allows a secretary to complete an appointment they scheduled.
+     * Appointment is marked done by either doc or secretary, or when payment is processed.
+     */
+    @PreAuthorize("hasRole('SECRETARY')")
+    @PutMapping("/{appointmentId}/secretary-complete")
+    public ResponseEntity<AppointmentResponse> completeAppointmentBySecretary(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable UUID appointmentId,
+            @RequestParam(required = false) String notes
+    ) {
+        UUID secretaryId = userDetails.getUser().getUserId();
+        AppointmentResponse response = appointmentService.completeAppointmentBySecretary(secretaryId, appointmentId, notes);
+        return ResponseEntity.ok(response);
+    }
+
     @PreAuthorize("hasRole('DOCTOR')")
     @GetMapping("/doctor/upcoming")
     public ResponseEntity<List<AppointmentResponse>> getUpcomingAppointments(

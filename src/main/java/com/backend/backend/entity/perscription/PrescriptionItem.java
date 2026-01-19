@@ -22,11 +22,11 @@ public class PrescriptionItem {
     private UUID itemId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "prescription_id", insertable = false, updatable = false)
+    @JoinColumn(name = "prescription_id")
     private Prescription prescription;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "medicament_id", insertable = false, updatable = false)
+    @JoinColumn(name = "medicament_id")
     private Medicament medicament;
 
     @Column(name = "quantity", nullable = false)

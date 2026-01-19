@@ -1,11 +1,11 @@
 package com.backend.backend.service.Doctor;
 
-import com.backend.backend.dto.response.Dashboard.ConsultationCardDTO;
+import com.backend.backend.dto.response.Consultation.ConsultationCardDTO;
 import com.backend.backend.dto.response.Doctor.DoctorDashboardDTO;
 import com.backend.backend.dto.response.ScheduleItemDTO;
 import com.backend.backend.entity.patient.Appointment;
 import com.backend.backend.enums.AppointmentStatus;
-import com.backend.backend.repository.Patient.AppointmentRepository;
+import com.backend.backend.repository.patient.AppointmentRepository;
 import com.backend.backend.service.Consultation.ConsultationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +39,7 @@ public class DashboardService {
     @Transactional(readOnly = true)
     public DoctorDashboardDTO getDoctorDashboard(UUID doctorId) {
         // Get latest consultations
-        List<ConsultationCardDTO> consultations = consultationService
+        List<com.backend.backend.dto.response.Consultation.ConsultationCardDTO> consultations = consultationService
                 .getLatestConsultationsForDoctor(doctorId);
 
         // Get schedule items

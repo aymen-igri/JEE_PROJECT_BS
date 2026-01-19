@@ -12,9 +12,9 @@ import com.backend.backend.entity.patient.Patient;
 import com.backend.backend.entity.practice.Cabinet;
 import com.backend.backend.enums.AppointmentStatus;
 import com.backend.backend.mapper.Appointment.AppointmentMapper;
-import com.backend.backend.repository.Patient.AppointmentRepository;
-import com.backend.backend.repository.Patient.PatientRepository;
 import com.backend.backend.repository.activity.ActivityLogRepository;
+import com.backend.backend.repository.patient.AppointmentRepository;
+import com.backend.backend.repository.patient.PatientRepository;
 
 import com.backend.backend.repository.practice.CabinetRepository;
 import com.backend.backend.repository.user.DoctorRepository;
@@ -92,6 +92,11 @@ public class AppointmentService {
             throw new IllegalArgumentException("Secretary not found with ID: " + secretaryId);
         }
 
+        // === VALIDATION: Cannot schedule appointments in the past ===
+        if (request.appointmentDateTime().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Cannot schedule appointment in the past. Please select a future date and time.");
+        }
+
         // Validate patient exists
         Patient patient = patientRepository.findPatientByPatientId(request.patientId());
         if (patient == null) {
@@ -153,6 +158,11 @@ public class AppointmentService {
         Secretary secretary = secretaryRepository.findByUserId(secretaryId);
         if (secretary == null) {
             throw new IllegalArgumentException("Secretary not found with ID: " + secretaryId);
+        }
+
+        // === VALIDATION: Cannot reschedule to a past date ===
+        if (request.newDateTime().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Cannot reschedule appointment to a past date and time. Please select a future date.");
         }
 
         // Fetch appointment with details
@@ -377,6 +387,55 @@ public class AppointmentService {
         // Log activity
         logActivity("Appointment completed", "Appointment", savedAppointment.getAppointmentId(),
                 "Appointment marked as completed by Dr. " + doctor.getFullName());
+
+        return appointmentMapper.toAppointmentResponse(savedAppointment);
+    }
+
+    /**
+     * Allows a secretary to complete an appointment they scheduled.
+     * Secretaries can only complete appointments they scheduled.
+     *
+     * @param secretaryId The ID of the secretary
+     * @param appointmentId The ID of the appointment to complete
+     * @param notes Optional notes
+     * @return The updated appointment response
+     */
+    @Transactional
+    public AppointmentResponse completeAppointmentBySecretary(UUID secretaryId, UUID appointmentId, String notes) {
+        // Validate secretary exists
+        Secretary secretary = secretaryRepository.findByUserId(secretaryId);
+        if (secretary == null) {
+            throw new IllegalArgumentException("Secretary not found with ID: " + secretaryId);
+        }
+
+        // Fetch appointment
+        Appointment appointment = appointmentRepository.findByAppointmentIdWithDetails(appointmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found with ID: " + appointmentId));
+
+        // Validate secretary scheduled this appointment
+        if (appointment.getScheduledBySecretary() == null ||
+                !appointment.getScheduledBySecretary().getUserId().equals(secretaryId)) {
+            throw new IllegalArgumentException("Unauthorized: You did not schedule this appointment");
+        }
+
+        // Validate status
+        if (appointment.getStatus() != AppointmentStatus.SCHEDULED &&
+            appointment.getStatus() != AppointmentStatus.IN_PROGRESS) {
+            throw new IllegalArgumentException("Cannot complete appointment with status: " + appointment.getStatus());
+        }
+
+        // Update appointment
+        appointment.setStatus(AppointmentStatus.COMPLETED);
+        if (notes != null && !notes.isBlank()) {
+            String existingNotes = appointment.getNotes() != null ? appointment.getNotes() + "\n" : "";
+            appointment.setNotes(existingNotes + "[Completed by Secretary] " + notes);
+        }
+
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+
+        // Log activity
+        logActivity("Appointment completed by secretary", "Appointment", savedAppointment.getAppointmentId(),
+                "Appointment marked as completed by secretary " + secretary.getFullName());
 
         return appointmentMapper.toAppointmentResponse(savedAppointment);
     }

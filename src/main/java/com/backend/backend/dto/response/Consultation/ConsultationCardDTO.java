@@ -1,4 +1,4 @@
-package com.backend.backend.dto.response.Dashboard;
+package com.backend.backend.dto.response.Consultation;
 
 import java.util.UUID;
 

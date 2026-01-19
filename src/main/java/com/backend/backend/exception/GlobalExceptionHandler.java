@@ -3,6 +3,7 @@ package com.backend.backend.exception;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -16,6 +17,31 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    // Handle grace period expiration (HTTP 409 Conflict)
+    @ExceptionHandler(GracePeriodExpiredException.class)
+    public ResponseEntity<Map<String, Object>> handleGracePeriodExpired(GracePeriodExpiredException ex) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("timestamp", LocalDateTime.now());
+        error.put("status", HttpStatus.CONFLICT.value());
+        error.put("error", "Grace Period Expired");
+        error.put("message", ex.getMessage());
+        error.put("gracePeriodMinutes", ex.getGracePeriodMinutes());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    // Handle access denied (HTTP 403 Forbidden)
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("timestamp", LocalDateTime.now());
+        error.put("status", HttpStatus.FORBIDDEN.value());
+        error.put("error", "Forbidden");
+        error.put("message", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
 
     // Handle illegal arguments (validation errors)
     @ExceptionHandler(IllegalArgumentException.class)

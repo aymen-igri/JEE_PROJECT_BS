@@ -1,4 +1,4 @@
-package com.backend.backend.repository.Patient;
+package com.backend.backend.repository.patient;
 
 import com.backend.backend.entity.patient.DoctorPatientLink;
 import org.springframework.data.jpa.repository.JpaRepository;

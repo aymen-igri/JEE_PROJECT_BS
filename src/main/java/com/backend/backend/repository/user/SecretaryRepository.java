@@ -19,6 +19,10 @@ public interface SecretaryRepository extends JpaRepository<Secretary, UUID> {
 
     Secretary findByUserId(UUID userId); //aymen is here, changed the return type from Optional<Secretary> to Secretary so i can work with it since i need it for the patient mapper
 
+    boolean existsByUsername(String username);
+
+    Secretary findByUsername(String username);
+
     @Query("SELECT s FROM Secretary s WHERE s.status = com.backend.backend.enums.EStatus.ACTIVE ORDER BY s.fullName")
     List<Secretary> findAllActive();
 
