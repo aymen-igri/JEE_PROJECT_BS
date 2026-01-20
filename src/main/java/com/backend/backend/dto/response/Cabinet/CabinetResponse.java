@@ -8,11 +8,13 @@ public record CabinetResponse(
         UUID id,
         String name,
         String logo,
+        String address,
         String specialty,
         String description,
         String phone,
         String status,
         BigDecimal defaultConsultPrice,
+        String doctorName,
         UUID createdBy,
         LocalDateTime createdAt
 ) {

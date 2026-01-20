@@ -1,6 +1,7 @@
 package com.backend.backend.controller;
 
 
+import com.backend.backend.dto.response.Cabinet.CabinetResponse;
 import com.backend.backend.entity.practice.Cabinet;
 import com.backend.backend.security.CustomUserDetails;
 import com.backend.backend.service.cabinet.CabinetService;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -43,6 +45,33 @@ public class CabinetController {
     @GetMapping("/all")
     public ResponseEntity<?> getAllCabinets() {
         return ResponseEntity.status(HttpStatus.OK).body(cabinetService.getAllCabinets());
+    }
+    @GetMapping("/info")
+    public ResponseEntity<Map<String, Object>> getOfficeInfo(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).build();
+        }
+
+        // Get the cabinet information for the authenticated user
+        CabinetResponse cabinet = cabinetService.getCabinetByAuthenticatedUser(authentication);
+
+        // Map the response to match frontend expectations
+        Map<String, Object> response = new HashMap<>();
+        response.put("cabinetId", cabinet.id().toString());
+        response.put("title", cabinet.name());
+        response.put("name", cabinet.name());
+        response.put("description", cabinet.description());
+        response.put("specialty", cabinet.specialty());
+        response.put("phone", cabinet.phone());
+        response.put("address", cabinet.address()); // Add address field to CabinetResponse if needed
+        response.put("status", cabinet.status());
+        response.put("doctorName", cabinet.doctorName()); // Add doctor name field if needed
+        response.put("consultationPrice", cabinet.defaultConsultPrice());
+        response.put("createdAt", cabinet.createdAt());
+        response.put("accountStatus", cabinet.status());
+        response.put("logoUrl", cabinet.logo() != null ? "/uploads/logos" + cabinet.logo() : null);
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/upload-logo")

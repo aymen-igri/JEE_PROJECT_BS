@@ -138,11 +138,11 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
     // ==================== ADDITIONAL METHODS FROM Patient/AppointmentRepository ====================
 
     @Query("SELECT a FROM Appointment a " +
-           "JOIN FETCH a.patient " +
-           "JOIN FETCH a.cabinet " +
-           "WHERE a.doctor.userId = :doctorId " +
-           "AND a.status NOT IN :excludedStatuses " +
-           "ORDER BY a.appointmentDateTime ASC")
+            "JOIN FETCH a.patient " +
+            "JOIN FETCH a.cabinet " +
+            "WHERE a.doctor.userId = :doctorId " +
+            "AND a.status NOT IN :excludedStatuses " +
+            "ORDER BY a.appointmentDateTime ASC")
     List<Appointment> findByDoctorUserIdWithDetails(
             @Param("doctorId") UUID doctorId,
             @Param("excludedStatuses") Collection<AppointmentStatus> excludedStatuses
@@ -151,10 +151,10 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
     // ==================== PAGINATED QUERIES ====================
 
     @Query("SELECT a FROM Appointment a " +
-           "JOIN FETCH a.patient " +
-           "JOIN FETCH a.cabinet " +
-           "WHERE a.doctor.userId = :doctorId " +
-           "AND a.status NOT IN :excludedStatuses")
+            "JOIN FETCH a.patient " +
+            "JOIN FETCH a.cabinet " +
+            "WHERE a.doctor.userId = :doctorId " +
+            "AND a.status NOT IN :excludedStatuses")
     Page<Appointment> findByDoctorUserIdWithDetailsPaged(
             @Param("doctorId") UUID doctorId,
             @Param("excludedStatuses") Collection<AppointmentStatus> excludedStatuses,
@@ -162,10 +162,10 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
     );
 
     @Query("SELECT a FROM Appointment a " +
-           "JOIN FETCH a.doctor " +
-           "JOIN FETCH a.cabinet " +
-           "WHERE a.patient.patientId = :patientId " +
-           "AND a.status NOT IN :excludedStatuses")
+            "JOIN FETCH a.doctor " +
+            "JOIN FETCH a.cabinet " +
+            "WHERE a.patient.patientId = :patientId " +
+            "AND a.status NOT IN :excludedStatuses")
     Page<Appointment> findByPatientPatientIdWithDetailsPaged(
             @Param("patientId") UUID patientId,
             @Param("excludedStatuses") Collection<AppointmentStatus> excludedStatuses,

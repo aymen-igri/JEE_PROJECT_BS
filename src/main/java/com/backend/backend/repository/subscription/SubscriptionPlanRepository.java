@@ -14,5 +14,7 @@ public interface SubscriptionPlanRepository extends JpaRepository<SubscriptionPl
 
     List<SubscriptionPlan> findByIsActiveTrue();
 
-    SubscriptionPlan findByPlanName(String planName);
+    Optional<SubscriptionPlan> findByPlanName(String planName);
+
+    boolean existsByPlanName(String casual);
 }

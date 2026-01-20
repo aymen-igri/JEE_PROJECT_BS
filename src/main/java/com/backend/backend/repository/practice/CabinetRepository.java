@@ -16,9 +16,12 @@ public interface CabinetRepository extends JpaRepository<Cabinet, UUID> {
 
     boolean existsByDoctorUserIdAndStatus(UUID doctorId, String status);
 
-    @Query("SELECT c.cabinetId as cabinetId, c.name as name, c.status as status " +
-            "FROM Cabinet c WHERE c.doctor.userId = :doctorId")
-    List<CabinetSummaryProjection> findCabinetsByDoctorId(@Param("doctorId") UUID doctorId);
+    @Query("SELECT c FROM Cabinet c WHERE c.doctor.userId = :doctorId")
+    List<Cabinet> findCabinetsByDoctorId(@Param("doctorId") UUID doctorId);
+
+    // Find active cabinet by doctor ID
+    @Query("SELECT c FROM Cabinet c WHERE c.doctor.userId = :doctorId AND UPPER(c.status) = 'ACTIVE'")
+    Optional<Cabinet> findActiveCabinetByDoctorId(@Param("doctorId") UUID doctorId);
 
     Optional<Cabinet> findByCabinetId(UUID cabinetId);
 
@@ -30,8 +33,6 @@ public interface CabinetRepository extends JpaRepository<Cabinet, UUID> {
 
     @Query("SELECT c FROM Cabinet c JOIN FETCH c.doctor WHERE c.cabinetId = :cabinetId")
     Optional<Cabinet> findByIdWithOwner(@Param("cabinetId") UUID cabinetId);
-    @Query("SELECT c FROM Cabinet c WHERE c.doctor.userId = :doctorId AND c.status = 'ACTIVE'")
-    Optional<Cabinet> findActiveCabinetByDoctorId(UUID doctorId);
     boolean existsByDoctorUserId(UUID doctorId);
 }
 

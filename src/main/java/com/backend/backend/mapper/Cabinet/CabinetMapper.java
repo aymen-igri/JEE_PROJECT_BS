@@ -12,11 +12,13 @@ public class CabinetMapper {
                 cabinet.getCabinetId(),
                 cabinet.getName(),
                 cabinet.getLogo(),
+                cabinet.getAddress(),
                 cabinet.getSpecialty(),
                 cabinet.getDescription(),
                 cabinet.getPhone(),
                 cabinet.getStatus(),
                 cabinet.getDefaultConsultPrice(),
+                cabinet.getDoctor().getFullName(),
                 cabinet.getDoctor().getUserId(),
                 cabinet.getCreatedAt()
         );

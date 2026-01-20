@@ -7,11 +7,13 @@ import com.backend.backend.entity.User.SuperAdmin;
 import com.backend.backend.entity.patient.MedicalRecord;
 import com.backend.backend.entity.patient.Patient;
 import com.backend.backend.entity.practice.Cabinet;
+import com.backend.backend.entity.subscription.SubscriptionPlan;
 import com.backend.backend.enums.EGender;
 import com.backend.backend.enums.EStatus;
 import com.backend.backend.repository.patient.MedicalRecordRepository;
 import com.backend.backend.repository.patient.PatientRepository;
 import com.backend.backend.repository.practice.CabinetRepository;
+import com.backend.backend.repository.subscription.SubscriptionPlanRepository;
 import com.backend.backend.repository.user.AdminRepository;
 import com.backend.backend.repository.user.DoctorRepository;
 import com.backend.backend.repository.user.SecretaryRepository;
@@ -26,11 +28,12 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
-
+    private final SubscriptionPlanRepository subscriptionPlanRepository;
     private final SuperAdminRepository superAdminRepository;
     private final AdminRepository adminRepository;
     private final DoctorRepository doctorRepository;
@@ -49,6 +52,7 @@ public class DataInitializer implements CommandLineRunner {
         createCabinetIfNotExists(doctor);
         Secretary secretary = createSecretaryIfNotExists();
         createPatientsIfNotExists(secretary);
+        createCasualPlanIfNotExists();
     }
 
     private void createSuperAdminIfNotExists() {
@@ -120,6 +124,37 @@ public class DataInitializer implements CommandLineRunner {
         } else {
             System.out.println("Admin (cbinit) already exists.");
             return null;
+        }
+    }
+    private void createCasualPlanIfNotExists() {
+        if (!subscriptionPlanRepository.existsByPlanName("casual")) {
+            // Get super admin to set as creator
+            SuperAdmin superAdmin = superAdminRepository.findByUsername("superadmin");
+            UUID creatorId = superAdmin != null ? superAdmin.getUserId() : null;
+
+            SubscriptionPlan casualPlan = SubscriptionPlan.builder()
+                    .planName("casual")
+                    .price(new BigDecimal("0.00"))
+                    .billingCycle("ANNUAL")
+                    .maxDoctors(1)
+                    .maxSecretary(1)
+                    .features(List.of(
+                            "Basic appointment scheduling",
+                            "Patient management (up to 50 patients)",
+                            "Email support",
+                            "Single doctor account",
+                            "Single secretary account",
+                            "Basic medical records",
+                            "Monthly reports"
+                    ))
+                    .isActive(true)
+                    .createdBy(creatorId)
+                    .build();
+
+            subscriptionPlanRepository.save(casualPlan);
+            System.out.println("Casual Plan created.");
+        } else {
+            System.out.println("Casual Plan already exists.");
         }
     }
 

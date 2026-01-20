@@ -30,6 +30,8 @@ public class Cabinet extends AuditableEntity {
     @Column(name = "logo", length = 500)
     private String logo;
 
+    @Column(name = "address", length = 255)
+    private String address;
 
     @Column(name = "specialty", length = 100)
     private String specialty;
@@ -37,11 +39,6 @@ public class Cabinet extends AuditableEntity {
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
-
-
-    @Column(name = "address", length = 255)
-    private String address;
-
 
     @Column(name = "phone", length = 20)
     private String phone;

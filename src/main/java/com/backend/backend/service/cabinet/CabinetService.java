@@ -8,6 +8,8 @@ import com.backend.backend.repository.practice.CabinetRepository;
 import com.backend.backend.repository.subscription.SubscriptionRepository;
 import com.backend.backend.repository.user.DoctorRepository;
 import com.backend.backend.repository.user.UserRepository;
+import com.backend.backend.security.CustomUserDetails;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +28,52 @@ public class CabinetService {
         this.subscriptionRepository = subscriptionRepository;
         this.cabinetMapper = cabinetMapper;
     }
+    public CabinetResponse getCabinetByAuthenticatedUser(Authentication authentication) {
+        // Extract UUID from CustomUserDetails
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        UUID userId = userDetails.getUserId(); // Assuming CustomUserDetails has getId() method
+
+        // Find the active cabinet created by this user
+        List<Cabinet> cabinets = cabinetRepository.findCabinetsByDoctorId(userId);
+
+        if (cabinets.isEmpty()) {
+            throw new RuntimeException("No cabinet found for user: " + userId);
+        }
+
+        Cabinet cabinet = cabinets.stream()
+                .filter(c -> c.getStatus() != null && "ACTIVE".equalsIgnoreCase(c.getStatus()))
+                .findFirst()
+                .orElse(cabinets.get(0)); // Fallback to first cabinet if no active one found
+
+        return mapToResponse(cabinet);
+    }
+
+    public CabinetResponse getCabinetById(UUID cabinetId) {
+        Cabinet cabinet = cabinetRepository.findById(cabinetId)
+                .orElseThrow(() -> new RuntimeException("Cabinet not found with id: " + cabinetId));
+
+        return mapToResponse(cabinet);
+    }
+    private CabinetResponse mapToResponse(Cabinet cabinet) {
+        return new CabinetResponse(
+                cabinet.getCabinetId(),
+                cabinet.getName(),
+                cabinet.getLogo(),
+                cabinet.getAddress(),
+                cabinet.getSpecialty(),
+                cabinet.getDescription(),
+
+
+
+                cabinet.getPhone(),
+                cabinet.getStatus(),
+                cabinet.getDefaultConsultPrice(),
+                cabinet.getDoctor().getFullName(),
+                cabinet.getDoctor().getUserId(),
+                cabinet.getCreatedAt()
+        );
+    }
+
 
     public Cabinet createCabinet(Cabinet cabinet, UUID doctorId) {
         // Find the doctor
