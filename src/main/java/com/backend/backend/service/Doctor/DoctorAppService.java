@@ -118,7 +118,7 @@ public class DoctorAppService {
         DoctorApplication application = doctorAppMapper.toApplication(doctorAppRequest);
 
         application.setUsername(authRequest.username());
-        application.setPassword(passwordEncoder.encode(authRequest.password()));
+        application.setPassword("{bcrypt}" + passwordEncoder.encode(authRequest.password()));
 
         UUID Idfiles = UUID.randomUUID();
         String diplomaPath = fileStorageService.storeFile(diploma, Idfiles, "diploma");

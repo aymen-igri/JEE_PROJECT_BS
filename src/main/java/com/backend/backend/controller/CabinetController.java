@@ -88,6 +88,7 @@ public class CabinetController {
         String url = "/uploads/logos/" + filename;
         return ResponseEntity.ok(Map.of("url", url));
     }
+    
     @GetMapping("/check-subscription")
     public ResponseEntity<Map<String, Object>> checkSubscription(@AuthenticationPrincipal CustomUserDetails userDetails) {
 

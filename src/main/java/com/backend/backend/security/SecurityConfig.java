@@ -39,14 +39,17 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints
-                        .requestMatchers("/api/auth/login", "/api/secretary/signup", "/api/doctor/apply", "/api/user/checkExistence").permitAll()
+                        .requestMatchers("/api/auth/login", "/api/secretary/signup", "/api/doctorApp/apply", "/api/user/checkExistence").permitAll()
 
                         // Super Admin endpoints
                         .requestMatchers("/api/admin/createAccount").hasRole("SUPER_ADMIN")
+                        .requestMatchers("/api/subscriptionPlan/cancel").hasRole("SUPER_ADMIN")
 
                         // Admin endpoints (ADMIN and SUPER_ADMIN)
-                        .requestMatchers("/api/admin/changeStatus").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/changeStatus").hasAnyRole("ADMIN","SUPER_ADMIN")
                         .requestMatchers("/api/admin/medicaments/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                        .requestMatchers("/api/offices/all").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                        .requestMatchers("/api/subscriptions/all").hasAnyRole("ADMIN", "SUPER_ADMIN")
 
                         // Secretary endpoints
                         .requestMatchers("/api/patient/create", "/api/patient/link").hasRole("SECRETARY")

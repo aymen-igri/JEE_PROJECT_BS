@@ -22,6 +22,11 @@ public class SubscriptionController {
     private final SubscriptionService subscriptionService;
     private final SubscriptionMapper subscriptionMapper;
 
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllSubscriptions(){
+        return ResponseEntity.ok(subscriptionService.getAllSubscription());
+    }
+
     @PostMapping("/create")
     public ResponseEntity<SubscriptionResponse> createSubscription(
             @RequestBody CreateSubscriptionRequest request,

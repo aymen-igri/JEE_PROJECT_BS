@@ -47,4 +47,12 @@ public class SubscriptionPlanService {
         SubscriptionPlan updatedPlan = subscriptionPlanRepository.save(subscriptionPlan);
         return subscriptionPlanMapper.toUpdateSPDTO(updatedPlan);
     }
+
+    @Transactional
+    public UpdateSPResponse cancelSP(UpdateSPRequest updateSPRequest) {
+        SubscriptionPlan subscriptionPlan = subscriptionPlanMapper.toSPUpdate(updateSPRequest);
+        subscriptionPlan.setIsActive(false);
+        SubscriptionPlan updatedPlan = subscriptionPlanRepository.save(subscriptionPlan);
+        return subscriptionPlanMapper.toUpdateSPDTO(updatedPlan);
+    }
 }

@@ -2,14 +2,12 @@ package com.backend.backend.controller;
 
 import com.backend.backend.dto.request.SuperAdmin.SuperAdminRequest;
 import com.backend.backend.dto.response.SuperAdmin.SuperAdminResponse;
-import com.backend.backend.entity.User.SuperAdmin;
 import com.backend.backend.repository.user.SuperAdminRepository;
 import com.backend.backend.security.CustomUserDetails;
 import com.backend.backend.service.SuperAdmin.SuperAdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

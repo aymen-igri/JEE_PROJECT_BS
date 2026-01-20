@@ -41,4 +41,11 @@ public class SubscriptionPlanController {
     ) throws Exception{
         return ResponseEntity.ok(subscriptionPlanService.updateSP(request));
     }
+
+    @PatchMapping("/cancel")
+    public ResponseEntity<?> cancelSP(
+            @RequestBody UpdateSPRequest request
+    ) throws Exception{
+        return ResponseEntity.ok(subscriptionPlanService.cancelSP(request));
+    }
 }
